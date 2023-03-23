@@ -1,0 +1,75 @@
+openapi: 3.0.0
+
+info:
+  title: Customer Management API
+  description: |-
+    Test API for Customer Management providing functionality for exporting and importing data through XLSX files.
+
+    A multiline text.
+  version: 0.0.1
+
+servers:
+  - url: http://localhost:8080/v1
+    description: A localy developed API, e.g. Development (local) server
+
+tags:
+  - name: Imports
+    description: Importing functionalities
+  - name: Exports
+    description: Exporting functionalities
+
+paths:
+  
+  /import/customers:
+    post:
+      tags:
+        - Imports
+      summary: Endpoint for importing customers from CSV/XLSX files.
+      requestBody:
+        description: Upload the file with customers for import
+        content:
+           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+        '400':
+          description: Validation error
+  
+  /import/contacts:
+    post:
+      tags:
+          - Imports
+      summary: Endpoint for importing contacts from CSV/XLSX files.
+      requestBody:
+        description: Upload the file with customers for import
+        content:
+           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary      
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+        '400':
+          description: Validation error
+
+components:
+  schemas:
+    Response:
+      type: object
+      properties:
+        status:
+          type: string
+          format: string
+          example: OK
