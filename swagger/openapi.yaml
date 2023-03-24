@@ -3,9 +3,7 @@ openapi: 3.0.0
 info:
   title: Customer Management API
   description: |-
-    Test API for Customer Management providing functionality for exporting and importing data through XLSX files.
-
-    A multiline text.
+    Test API for Customer Management.
   version: 0.0.1
 
 servers:
@@ -13,12 +11,69 @@ servers:
     description: A localy developed API, e.g. Development (local) server
 
 tags:
-  - name: Imports
-    description: Importing functionalities
-  - name: Exports
-    description: Exporting functionalities
+  - name: Customers
+    description: Managing customers
+  - name: Contacts
+    description: Managing contacts
+  - name: Addresses
+    description: Managing addresses
 
 paths:
+  /customers:
+    get:
+      tags:
+        - Customers
+      summary: Returns a list of customers.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              # TODO: Add pagination later
+              schema:
+                type: array
+                items:  
+                  $ref: "#/components/schemas/Customer"
+    post:
+      tags:
+       - Customers
+      summary: Creates a new customer.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomerPost"
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+            
+  /customers/{id}:
+    get:
+      tags:
+        - Customers
+      summary: Returns a customers for a given ID.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the customer to return
+          required: true
+          schema:
+            format: integer
+        
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              # TODO: Add pagination later
+              schema:
+                type: array
+                items:  
+                  $ref: "#/components/schemas/Customer"
   
   /import/customers:
     post:
@@ -115,3 +170,80 @@ components:
           type: string
           format: string
           example: OK
+    
+    Customer:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 32
+        name:
+          type: string
+          example: Test Inc.
+        short_name:
+          type: string
+          example: tt01
+        vat_number:
+          type: string
+          example: 265 478
+        vat_apply:
+          type: boolean
+          example: true
+        registration_number:
+          type: string
+          example: 24378253
+        duns_number:
+          type: string
+          example: 23678167
+        tax_exempt:
+          type: boolean
+          example: false
+        language:
+          type: string
+          example: en
+        email:
+          type: string
+          example: test@test.com
+        phone:
+          type: string
+          example: 38162558587
+        fax:
+          type: string
+          example: 23467237868
+
+    CustomerPost:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Test Inc.
+        short_name:
+          type: string
+          example: tt01
+        vat_number:
+          type: string
+          example: 265 478
+        vat_apply:
+          type: boolean
+          example: true
+        registration_number:
+          type: string
+          example: 24378253
+        duns_number:
+          type: string
+          example: 23678167
+        tax_exempt:
+          type: boolean
+          example: false
+        language:
+          type: string
+          example: en
+        email:
+          type: string
+          example: test@test.com
+        phone:
+          type: string
+          example: 38162558587
+        fax:
+          type: string
+          example: 23467237868
