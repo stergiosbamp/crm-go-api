@@ -78,6 +78,34 @@ paths:
                 type: string
                 format: binary
   
+  /export/contacts:
+    get:
+      tags:
+        - Exports
+      summary: Endpoint for exporting contacts from database to CSV/XLSX files.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+  
+  /export/addresses:
+    get:
+      tags:
+        - Exports
+      summary: Endpoint for exporting addresses from database to CSV/XLSX files.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+  
 components:
   schemas:
     Response:
