@@ -1,0 +1,63 @@
+components:
+  schemas:
+    AddressContact:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 5
+        type:
+          type: string
+          example: contact
+        address:
+          type: string
+          example: Balkanska 3
+        pobox:
+          type: string
+          example: 123585
+        postal_code:
+          type: string
+          example: 523323
+        city:
+          type: string
+          example: Paracin
+        province:
+          type: string
+          example: Pomoravlje
+        country:
+          type: string
+          example: Serbia
+
+    AddressCustomer:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 7
+        type:
+          type: string
+          example: legal
+          enum:
+            - legal
+            - branch
+        address:
+          type: string
+          example: Bolacker 1
+        pobox:
+          type: string
+          example: 123585
+        postal_code:
+          type: string
+          example: 4563
+        city:
+          type: string
+          example: Paracin
+        province:
+          type: string
+          example: Pomoravlje
+        country:
+          type: string
+          example: Serbia
+        attention_person:
+          type: string
+          example: CH

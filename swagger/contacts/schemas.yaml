@@ -1,0 +1,316 @@
+components:
+  schemas:    
+    Contact:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 17
+        contactType:
+          type: string
+          example: CEO
+          enum:
+            - Commercial
+            - Finance
+            - Legal
+            - CEO
+            - Other
+            - DPO
+            - Technical
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        nickName:
+          type: string
+          example: Jo
+        gender:
+          type: string
+          example: male
+        birthday:
+          type: string
+          format: date
+          example: 1990-01-13
+        language:
+          type: string
+          example: en
+        jobTitle:
+          type: string
+          example: Marketing manager
+        email:
+          type: string
+          example: john@doe.com
+        skype:
+          type: string
+          example: john.doe
+        phoneDirect:
+          type: string
+          example: 38162558587
+        phoneOffice:
+          type: string
+          example: 38162558587
+        phoneMobile:
+          type: string
+          example: 38162558587
+        notes:
+          type: string
+          example: This is a note.
+        customer:
+          $ref: "../customers/schemas.yaml#/components/schemas/Customer"
+        address:
+          $ref: '../addresses/schemas.yaml#/components/schemas/AddressContact'
+            
+    ContactPost:
+      type: object
+      properties:
+        contactType:
+          type: string
+          example: CEO
+          enum:
+            - Commercial
+            - Finance
+            - Legal
+            - CEO
+            - Other
+            - DPO
+            - Technical
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        nickName:
+          type: string
+          example: Jo
+        gender:
+          type: string
+          example: male
+        birthday:
+          type: string
+          format: date
+          example: 1990-01-13
+        language:
+          type: string
+          example: en
+        jobTitle:
+          type: string
+          example: Marketing manager
+        email:
+          type: string
+          example: john@doe.com
+        skype:
+          type: string
+          example: john.doe
+        phoneDirect:
+          type: string
+          example: 38162558587
+        phoneOffice:
+          type: string
+          example: 38162558587
+        phoneMobile:
+          type: string
+          example: 38162558587
+        notes:
+          type: string
+          example: This is a note.
+        customerId:
+          type: integer
+          example: 32
+        addressId:
+          type: integer
+          example: 5
+
+    ContactPut:
+      type: object
+      properties:
+        contactType:
+          type: string
+          example: CEO
+          enum:
+            - Commercial
+            - Finance
+            - Legal
+            - CEO
+            - Other
+            - DPO
+            - Technical
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        nickName:
+          type: string
+          example: Jo
+        gender:
+          type: string
+          example: male
+        birthday:
+          type: string
+          format: date
+          example: 2000-01-13
+        language:
+          type: string
+          example: en
+        jobTitle:
+          type: string
+          example: Marketing manager
+        email:
+          type: string
+          example: john@doe.com
+        skype:
+          type: string
+          example: john.doe
+        phoneDirect:
+          type: string
+          example: 38162558587
+        phoneOffice:
+          type: string
+          example: 38162558587
+        phoneMobile:
+          type: string
+          example: 38162558587
+        notes:
+          type: string
+          example: This is a note.
+        customer:
+          type: integer
+          example: 32
+        addressId:
+          type: integer
+          example: 7
+
+    ContactPutResponse:
+      type: object
+      properties:
+        contactType:
+          type: string
+          example: CEO
+          enum:
+            - Commercial
+            - Finance
+            - Legal
+            - CEO
+            - Other
+            - DPO
+            - Technical
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        nickName:
+          type: string
+          example: Jo
+        gender:
+          type: string
+          example: male
+        birthday:
+          type: string
+          format: date
+          example: 2000-01-13
+        language:
+          type: string
+          example: en
+        jobTitle:
+          type: string
+          example: Marketing manager
+        email:
+          type: string
+          example: john@doe.com
+        skype:
+          type: string
+          example: john.doe
+        phoneDirect:
+          type: string
+          example: 38162558587
+        phoneOffice:
+          type: string
+          example: 38162558587
+        phoneMobile:
+          type: string
+          example: 38162558587
+        notes:
+          type: string
+          example: This is a note.
+        customer:
+          type: integer
+          $ref: '../customers/schemas.yaml#/components/schemas/Customer'
+        addresses:
+          type: array
+          items:
+            $ref: '../addresses/schemas.yaml#/components/schemas/AddressCustomer'
+
+    ContactPatch:
+      type: object
+      properties:
+        customerId:
+          type: integer
+          example: 32
+
+    ContactPatchResponse:
+      type: object
+      properties:
+        contactType:
+          type: string
+          example: CEO
+          enum:
+            - Commercial
+            - Finance
+            - Legal
+            - CEO
+            - Other
+            - DPO
+            - Technical
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        nickName:
+          type: string
+          example: Jo
+        gender:
+          type: string
+          example: male
+        birthday:
+          type: string
+          format: date
+          example: 2000-01-13
+        language:
+          type: string
+          example: en
+        jobTitle:
+          type: string
+          example: Marketing manager
+        email:
+          type: string
+          example: john@doe.com
+        skype:
+          type: string
+          example: john.doe
+        phoneDirect:
+          type: string
+          example: 38162558587
+        phoneOffice:
+          type: string
+          example: 38162558587
+        phoneMobile:
+          type: string
+          example: 38162558587
+        notes:
+          type: string
+          example: This is a note.
+        customer:
+          type: integer
+          $ref: '../customers/schemas.yaml#/components/schemas/Customer'
+        addresses:
+          type: array
+          items:
+            $ref: '../addresses/schemas.yaml#/components/schemas/AddressContact'

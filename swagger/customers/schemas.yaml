@@ -1,0 +1,236 @@
+components:
+  schemas:
+    Customer:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 32
+        active:
+          type: boolean
+          example: true
+        name:
+          type: string
+          example: Test Inc.
+        shortName:
+          type: string
+          example: tt01
+        vatNumber:
+          type: string
+          example: 265 478
+        vatApply:
+          type: boolean
+          example: true
+        registrationNumber:
+          type: string
+          example: 24378253
+        dunsNumber:
+          type: string
+          example: 23678167
+        taxExempt:
+          type: boolean
+          example: false
+        language:
+          type: string
+          example: en
+        email:
+          type: string
+          example: test@test.com
+        phone:
+          type: string
+          example: 38162558587
+        fax:
+          type: string
+          example: 23467237868
+        addresses:
+          type: array
+          items:
+            $ref: '../addresses/schemas.yaml#/components/schemas/AddressCustomer'
+
+    CustomerPost:
+      type: object
+      properties:
+        active:
+          type: boolean
+          example: true
+        name:
+          type: string
+          example: Test Inc.
+        shortName:
+          type: string
+          example: tt01
+        vatNumber:
+          type: string
+          example: 265 478
+        vatApply:
+          type: boolean
+          example: true
+        registrationNumber:
+          type: string
+          example: 24378253
+        dunsNumber:
+          type: string
+          example: 23678167
+        taxExempt:
+          type: boolean
+          example: false
+        language:
+          type: string
+          example: en
+        email:
+          type: string
+          example: test@test.com
+        phone:
+          type: string
+          example: 38162558587
+        fax:
+          type: string
+          example: 23467237868
+        addressesId:
+          type: array
+          example: [7]
+
+    CustomerPut:
+      type: object
+      properties:
+        active:
+          type: boolean
+          example: true
+        name:
+          type: string
+          example: Test Inc.
+        shortName:
+          type: string
+          example: tt02
+        vatNumber:
+          type: string
+          example: 265 478
+        vatApply:
+          type: boolean
+          example: true
+        registrationNumber:
+          type: string
+          example: 24378253
+        dunsNumber:
+          type: string
+          example: 23678167
+        taxExempt:
+          type: boolean
+          example: false
+        language:
+          type: string
+          example: gr
+        email:
+          type: string
+          example: test2@test2.com
+        phone:
+          type: string
+          example: 38162558587
+        fax:
+          type: string
+          example: 23467237868
+        addressesId:
+          type: array
+          example: [7]
+    
+
+    CustomerPutResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 12
+        active:
+          type: boolean
+          example: true
+        name:
+          type: string
+          example: Test Inc.
+        shortName:
+          type: string
+          example: tt02
+        vatNumber:
+          type: string
+          example: 265 478
+        vatApply:
+          type: boolean
+          example: true
+        registrationNumber:
+          type: string
+          example: 24378253
+        dunsNumber:
+          type: string
+          example: 23678167
+        taxExempt:
+          type: boolean
+          example: false
+        language:
+          type: string
+          example: gr
+        email:
+          type: string
+          example: test2@test2.com
+        phone:
+          type: string
+          example: 38162558587
+        fax:
+          type: string
+          example: 23467237868
+        addresses:
+          type: array
+          items:
+            $ref: '../addresses/schemas.yaml#/components/schemas/AddressCustomer'
+
+    CustomerPatch:
+      type: object
+      properties:
+        active:
+          type: boolean
+          example: false
+
+    CustomerPatchResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 12
+        active:
+          type: boolean
+          example: false
+        name:
+          type: string
+          example: Test Inc.
+        shortName:
+          type: string
+          example: tt01
+        vatNumber:
+          type: string
+          example: 265 478
+        vatApply:
+          type: boolean
+          example: true
+        registrationNumber:
+          type: string
+          example: 24378253
+        dunsNumber:
+          type: string
+          example: 23678167
+        taxExempt:
+          type: boolean
+          example: false
+        language:
+          type: string
+          example: en
+        email:
+          type: string
+          example: test@test.com
+        phone:
+          type: string
+          example: 38162558587
+        fax:
+          type: string
+          example: 23467237868
+        addresses:
+          type: array
+          items:
+            $ref: '../addresses/schemas.yaml#/components/schemas/AddressCustomer'
