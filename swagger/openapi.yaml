@@ -405,6 +405,128 @@ paths:
               schema:
                 $ref: '#/components/schemas/DefaultResponse'
   
+  # Addresses Management
+  /addresses:
+    get:
+      tags:
+        - Addresses
+      summary: Returns a list of addresses.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              # TODO: Add pagination later
+              schema:
+                type: array
+                items:  
+                  $ref: "./addresses/schemas.yaml#/components/schemas/AddressCustomer"
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+    post:
+      tags:
+       - Addresses
+      summary: Creates a new address.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "./addresses/schemas.yaml#/components/schemas/AddressPost"
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "./addresses/schemas.yaml#/components/schemas/AddressContact"
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+
+  /addresses/{id}:
+    get:
+      tags:
+        - Addresses
+      summary: Returns an address for a given ID.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the address to return
+          required: true
+          schema:
+            format: integer
+        
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              # TODO: Add pagination later
+              schema:
+                $ref: "./addresses/schemas.yaml#/components/schemas/AddressContact"
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+    put:
+      tags:
+        - Addresses
+      summary: Updates an address for a given ID.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the contact to return
+          required: true
+          schema:
+            format: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "./addresses/schemas.yaml#/components/schemas/AddressPut"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "./addresses/schemas.yaml#/components/schemas/AddressPutResponse"
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+    delete:
+      tags:
+        - Addresses
+      summary: Deletes a contact for a given ID.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the contact to patch
+          required: true
+          schema:
+            format: integer
+      responses:
+        '204':
+          description: Delete success
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+
 components:
   schemas:
     
