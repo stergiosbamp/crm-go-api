@@ -3,7 +3,7 @@ openapi: 3.0.0
 info:
   title: Customer Management API
   description: |-
-    Test API for Customer Management.
+    API for Customer Management.
   version: 0.0.1
 
 servers:
@@ -19,6 +19,7 @@ tags:
     description: Managing addresses
 
 paths:
+  # Customers Management
   /customers:
     get:
       tags:
@@ -34,6 +35,12 @@ paths:
                 type: array
                 items:  
                   $ref: "#/components/schemas/Customer"
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
     post:
       tags:
        - Customers
@@ -50,6 +57,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Customer"
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
             
   /customers/{id}:
     get:
@@ -74,12 +87,90 @@ paths:
                 type: array
                 items:  
                   $ref: "#/components/schemas/Customer"
-  
-  /import/customers:
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+    put:
+      tags:
+        - Customers
+      summary: Updates a customer for a given ID.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the customer to return
+          required: true
+          schema:
+            format: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomerPut"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerPutResponse"
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+    patch:
+      tags:
+        - Customers
+      summary: Patches (status change) a customer for a given ID.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the customer to patch
+          required: true
+          schema:
+            format: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomerPatch"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerPatchResponse"
+    delete:
+      tags:
+        - Customers
+      summary: Deletes a customer for a given ID.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the customer to patch
+          required: true
+          schema:
+            format: integer
+      responses:
+        '204':
+          description: Delete success
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+
+  /customers/import:
     post:
       tags:
-        - Imports
-      summary: Endpoint for importing customers from CSV/XLSX files.
+        - Customers
+      summary: Imports customers from CSV/XLSX files.
       requestBody:
         description: Upload the file with customers for import
         content:
@@ -88,95 +179,61 @@ paths:
               type: string
               format: binary
       responses:
-        '201':
-          description: OK
+        '200':
+          description: Success
+        '400':
+          description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Response'
-        '400':
-          description: Validation error
+                $ref: '#/components/schemas/ImportError'
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
   
-  /import/contacts:
-    post:
+  /customers/export:
+    get:
       tags:
-          - Imports
-      summary: Endpoint for importing contacts from CSV/XLSX files.
-      requestBody:
-        description: Upload the file with customers for import
-        content:
-           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
-            schema:
-              type: string
-              format: binary      
+        - Customers
+      summary: Exports customers from database to CSV/XLSX files.
       responses:
-        '201':
-          description: OK
+        '200':
+          description: Success
           content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+        default:
+          description: Unexpected error
+          content: 
             application/json:
               schema:
-                $ref: '#/components/schemas/Response'
-        '400':
-          description: Validation error
+                $ref: '#/components/schemas/DefaultResponse'
 
-  /export/customers:
-    get:
-      tags:
-        - Exports
-      summary: Endpoint for exporting customers from database to CSV/XLSX files.
-      responses:
-        '200':
-          description: Success
-          content:
-            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
-              schema:
-                type: string
-                format: binary
-  
-  /export/contacts:
-    get:
-      tags:
-        - Exports
-      summary: Endpoint for exporting contacts from database to CSV/XLSX files.
-      responses:
-        '200':
-          description: Success
-          content:
-            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
-              schema:
-                type: string
-                format: binary
-  
-  /export/addresses:
-    get:
-      tags:
-        - Exports
-      summary: Endpoint for exporting addresses from database to CSV/XLSX files.
-      responses:
-        '200':
-          description: Success
-          content:
-            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
-              schema:
-                type: string
-                format: binary
-  
+
 components:
   schemas:
-    Response:
+    DefaultResponse:
       type: object
       properties:
-        status:
+        errorCode:
+          type: integer
+        message:
           type: string
-          format: string
-          example: OK
-    
+  
     Customer:
       type: object
       properties:
         id:
           type: integer
           example: 32
+        active:
+          type: boolean
+          example: true
         name:
           type: string
           example: Test Inc.
@@ -214,6 +271,9 @@ components:
     CustomerPost:
       type: object
       properties:
+        active:
+          type: boolean
+          example: true
         name:
           type: string
           example: Test Inc.
@@ -247,3 +307,119 @@ components:
         fax:
           type: string
           example: 23467237868
+
+    CustomerPut:
+      type: object
+      properties:
+        short_name:
+          type: string
+          example: tt02
+        language:
+          type: string
+          example: gr
+        email:
+          type: string
+          example: test2@test2.com
+        phone:
+          type: string
+          example: 38162558587
+
+    CustomerPutResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 12
+        active:
+          type: boolean
+          example: true
+        name:
+          type: string
+          example: Test Inc.
+        short_name:
+          type: string
+          example: tt02
+        vat_number:
+          type: string
+          example: 265 478
+        vat_apply:
+          type: boolean
+          example: true
+        registration_number:
+          type: string
+          example: 24378253
+        duns_number:
+          type: string
+          example: 23678167
+        tax_exempt:
+          type: boolean
+          example: false
+        language:
+          type: string
+          example: gr
+        email:
+          type: string
+          example: test2@test2.com
+        phone:
+          type: string
+          example: 38162558587
+        fax:
+          type: string
+          example: 23467237868
+
+    CustomerPatch:
+      type: object
+      properties:
+        active:
+          type: boolean
+          example: false
+
+    CustomerPatchResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 12
+        active:
+          type: boolean
+          example: false
+        name:
+          type: string
+          example: Test Inc.
+        short_name:
+          type: string
+          example: tt01
+        vat_number:
+          type: string
+          example: 265 478
+        vat_apply:
+          type: boolean
+          example: true
+        registration_number:
+          type: string
+          example: 24378253
+        duns_number:
+          type: string
+          example: 23678167
+        tax_exempt:
+          type: boolean
+          example: false
+        language:
+          type: string
+          example: en
+        email:
+          type: string
+          example: test@test.com
+        phone:
+          type: string
+          example: 38162558587
+        fax:
+          type: string
+          example: 23467237868
+
+    ImportError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Email is in incorrect format.
