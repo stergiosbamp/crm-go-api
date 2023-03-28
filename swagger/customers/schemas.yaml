@@ -42,10 +42,9 @@ components:
         fax:
           type: string
           example: 23467237868
-        addresses:
+        addressesIds:
           type: array
-          items:
-            $ref: '../addresses/schemas.yaml#/components/schemas/AddressCustomer'
+          example: [7]
 
     CustomerPost:
       type: object
@@ -176,10 +175,9 @@ components:
         fax:
           type: string
           example: 23467237868
-        addresses:
+        addressesId:
           type: array
-          items:
-            $ref: '../addresses/schemas.yaml#/components/schemas/AddressCustomer'
+          example: [7]
 
     CustomerPatch:
       type: object
@@ -230,7 +228,6 @@ components:
         fax:
           type: string
           example: 23467237868
-        addresses:
+        addressesId:
           type: array
-          items:
-            $ref: '../addresses/schemas.yaml#/components/schemas/AddressCustomer'
+          example: [7]
