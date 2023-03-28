@@ -365,10 +365,16 @@ paths:
       requestBody:
         description: Upload the file with contacts for import
         content:
-           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+           multipart/form-data:
             schema:
-              type: string
-              format: binary
+              type: object
+              properties:
+                customerId:
+                  type: integer
+                  example: 32
+                filePath:
+                  type: string
+                  format: binary
       responses:
         '200':
           description: Success
@@ -390,6 +396,13 @@ paths:
       tags:
         - Contacts
       summary: Exports contacts from database to CSV/XLSX files.
+      parameters:
+        - name: id
+          in: query
+          description: ID of the customer for whom to export contacts
+          required: true
+          schema:
+            format: integer
       responses:
         '200':
           description: Success
