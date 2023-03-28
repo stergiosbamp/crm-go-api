@@ -57,10 +57,12 @@ components:
         notes:
           type: string
           example: This is a note.
-        customer:
-          $ref: "../customers/schemas.yaml#/components/schemas/Customer"
-        address:
-          $ref: '../addresses/schemas.yaml#/components/schemas/AddressContact'
+        customerId:
+          type: integer
+          example: 32
+        addressId:
+          type: integer
+          example: 5
             
     ContactPost:
       type: object
@@ -177,12 +179,12 @@ components:
         notes:
           type: string
           example: This is a note.
-        customer:
+        customerId:
           type: integer
           example: 32
         addressId:
           type: integer
-          example: 7
+          example: 5
 
     ContactPutResponse:
       type: object
@@ -238,13 +240,12 @@ components:
         notes:
           type: string
           example: This is a note.
-        customer:
+        customerId:
           type: integer
-          $ref: '../customers/schemas.yaml#/components/schemas/Customer'
-        addresses:
-          type: array
-          items:
-            $ref: '../addresses/schemas.yaml#/components/schemas/AddressCustomer'
+          example: 32
+        addressId:
+          type: integer
+          example: 5
 
     ContactPatch:
       type: object
@@ -307,10 +308,9 @@ components:
         notes:
           type: string
           example: This is a note.
-        customer:
+        customerId:
           type: integer
-          $ref: '../customers/schemas.yaml#/components/schemas/Customer'
-        addresses:
-          type: array
-          items:
-            $ref: '../addresses/schemas.yaml#/components/schemas/AddressContact'
+          example: 32
+        addressId:
+          type: integer
+          example: 5
