@@ -2,6 +2,23 @@ components:
   schemas:    
     Contact:
       type: object
+      required:
+        - id
+        - contactType
+        - firstName
+        - lastName
+        - nickName
+        - gender
+        - birthday
+        - language
+        - jobTitle
+        - email
+        - skype
+        - phoneDirect
+        - phoneOffice
+        - phoneMobile
+        - notes
+        - customerId
       properties:
         id:
           type: integer
@@ -66,6 +83,22 @@ components:
             
     ContactPost:
       type: object
+      required:
+        - contactType
+        - firstName
+        - lastName
+        - nickName
+        - gender
+        - birthday
+        - language
+        - jobTitle
+        - email
+        - skype
+        - phoneDirect
+        - phoneOffice
+        - phoneMobile
+        - notes
+        - customerId
       properties:
         contactType:
           type: string
@@ -127,6 +160,22 @@ components:
 
     ContactPut:
       type: object
+      required:
+        - contactType
+        - firstName
+        - lastName
+        - nickName
+        - gender
+        - birthday
+        - language
+        - jobTitle
+        - email
+        - skype
+        - phoneDirect
+        - phoneOffice
+        - phoneMobile
+        - notes
+        - customerId
       properties:
         contactType:
           type: string
@@ -188,6 +237,23 @@ components:
 
     ContactPutResponse:
       type: object
+      required:
+        - id
+        - contactType
+        - firstName
+        - lastName
+        - nickName
+        - gender
+        - birthday
+        - language
+        - jobTitle
+        - email
+        - skype
+        - phoneDirect
+        - phoneOffice
+        - phoneMobile
+        - notes
+        - customerId
       properties:
         contactType:
           type: string
@@ -256,6 +322,23 @@ components:
 
     ContactPatchResponse:
       type: object
+      required:
+        - id
+        - contactType
+        - firstName
+        - lastName
+        - nickName
+        - gender
+        - birthday
+        - language
+        - jobTitle
+        - email
+        - skype
+        - phoneDirect
+        - phoneOffice
+        - phoneMobile
+        - notes
+        - customerId
       properties:
         contactType:
           type: string
