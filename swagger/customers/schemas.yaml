@@ -2,6 +2,21 @@ components:
   schemas:
     Customer:
       type: object
+      required:
+        - id
+        - active
+        - name
+        - shortName
+        - vatNumber
+        - vatApply
+        - registrationNumber
+        - dunsNumber
+        - taxExempt
+        - language
+        - email
+        - phone
+        - fax
+        - addressesIds
       properties:
         id:
           type: integer
@@ -48,6 +63,20 @@ components:
 
     CustomerPost:
       type: object
+      required:
+        - active
+        - name
+        - shortName
+        - vatNumber
+        - vatApply
+        - registrationNumber
+        - dunsNumber
+        - taxExempt
+        - language
+        - email
+        - phone
+        - fax
+        - addressesIds
       properties:
         active:
           type: boolean
@@ -91,6 +120,20 @@ components:
 
     CustomerPut:
       type: object
+      required:
+        - active
+        - name
+        - shortName
+        - vatNumber
+        - vatApply
+        - registrationNumber
+        - dunsNumber
+        - taxExempt
+        - language
+        - email
+        - phone
+        - fax
+        - addressesIds
       properties:
         active:
           type: boolean
@@ -135,6 +178,21 @@ components:
 
     CustomerPutResponse:
       type: object
+      required:
+        - id
+        - active
+        - name
+        - shortName
+        - vatNumber
+        - vatApply
+        - registrationNumber
+        - dunsNumber
+        - taxExempt
+        - language
+        - email
+        - phone
+        - fax
+        - addressesIds
       properties:
         id:
           type: integer
@@ -181,6 +239,8 @@ components:
 
     CustomerPatch:
       type: object
+      required:
+        - active
       properties:
         active:
           type: boolean
@@ -188,6 +248,21 @@ components:
 
     CustomerPatchResponse:
       type: object
+      required:
+        - id
+        - active
+        - name
+        - shortName
+        - vatNumber
+        - vatApply
+        - registrationNumber
+        - dunsNumber
+        - taxExempt
+        - language
+        - email
+        - phone
+        - fax
+        - addressesIds
       properties:
         id:
           type: integer
