@@ -368,12 +368,17 @@ paths:
            multipart/form-data:
             schema:
               type: object
+              required:
+                - customerId
+                - filePath
               properties:
                 customerId:
                   type: integer
+                  description: The customer id for whom to import it's contacts
                   example: 32
                 filePath:
                   type: string
+                  description: The file path of the CSV/EXCEL file to upload and import
                   format: binary
       responses:
         '200':
