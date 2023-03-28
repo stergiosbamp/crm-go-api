@@ -540,6 +540,33 @@ paths:
               schema:
                 $ref: '#/components/schemas/DefaultResponse'
 
+  /addresses/export:
+    get:
+      tags:
+        - Addresses
+      summary: Exports addresses from database to CSV/XLSX files.
+      parameters:
+        - name: id
+          in: query
+          description: ID of the customer for whom to export addresses
+          required: true
+          schema:
+            format: integer
+      responses:
+        '200':
+          description: Success
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+
 components:
   schemas:
     
