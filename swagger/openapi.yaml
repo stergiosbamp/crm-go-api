@@ -509,7 +509,7 @@ paths:
     delete:
       tags:
         - Addresses
-      summary: Deletes a contact for a given ID.
+      summary: Deletes an address for a given ID.
       parameters:
         - name: id
           in: path
