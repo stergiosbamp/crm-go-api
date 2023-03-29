@@ -439,8 +439,10 @@ paths:
               # TODO: Add pagination later
               schema:
                 type: array
-                items:  
-                  $ref: "./addresses/schemas.yaml#/components/schemas/AddressCustomer"
+                items:
+                  oneOf:
+                    - $ref: "./addresses/schemas.yaml#/components/schemas/AddressCustomer"
+                    - $ref: "./addresses/schemas.yaml#/components/schemas/AddressContact"
         default:
           description: Unexpected error
           content: 
@@ -455,14 +457,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "./addresses/schemas.yaml#/components/schemas/AddressPost"
+              oneOf:
+                - $ref: "./addresses/schemas.yaml#/components/schemas/AddressCustomerPost"
+                - $ref: "./addresses/schemas.yaml#/components/schemas/AddressContactPost"
       responses:
         '201':
           description: Created
           content:
             application/json:
               schema:
-                $ref: "./addresses/schemas.yaml#/components/schemas/AddressContact"
+                oneOf:
+                  - $ref: "./addresses/schemas.yaml#/components/schemas/AddressCustomer"
+                  - $ref: "./addresses/schemas.yaml#/components/schemas/AddressContact"
         default:
           description: Unexpected error
           content: 
