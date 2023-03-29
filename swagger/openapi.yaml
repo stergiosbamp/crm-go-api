@@ -404,8 +404,10 @@ paths:
       parameters:
         - name: id
           in: query
-          description: ID of the customer for whom to export contacts
-          required: true
+          description: |- 
+            ID of the customer for whom to export contacts. 
+            
+            If omitted, it exports the contacts for all the available customers.
           schema:
             format: integer
       responses:
