@@ -553,10 +553,21 @@ paths:
         - Addresses
       summary: Exports addresses from database to CSV/XLSX files.
       parameters:
+        - name: type
+          in: query
+          description: type
+          required: true
+          schema:
+            enum:
+              - contact
+              - customer
         - name: id
           in: query
-          description: ID of the customer for whom to export addresses
-          required: true
+          description: |-
+            ID of the customer or contact for whom to export addresses.
+
+            If omitted, it exports the addresses for all the available customers or contacts depending on the
+            `type` query parameter.
           schema:
             format: integer
       responses:
