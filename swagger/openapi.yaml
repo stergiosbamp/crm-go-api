@@ -496,7 +496,9 @@ paths:
             application/json:
               # TODO: Add pagination later
               schema:
-                $ref: "./addresses/schemas.yaml#/components/schemas/AddressContact"
+                oneOf:
+                  - $ref: "./addresses/schemas.yaml#/components/schemas/AddressContact"
+                  - $ref: "./addresses/schemas.yaml#/components/schemas/AddressCustomer"
         default:
           description: Unexpected error
           content: 

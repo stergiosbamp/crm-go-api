@@ -127,6 +127,7 @@ components:
         - city
         - province
         - country
+        - customerId
       properties:
         id:
           type: integer
