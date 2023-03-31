@@ -1,19 +1,14 @@
 package main
 
 import (
-	"log"
+	// "log"
 
-	"github.com/stergiosbamp/go-api/models"
 	"github.com/stergiosbamp/go-api/database"
-	
+	"github.com/stergiosbamp/go-api/models"
 )
-
 
 func main() {
 	db, _ := database.GetDB()
+	db.AutoMigrate(&models.Customer{}, &models.Contact{}, &models.Address{})
 
-	var customer models.Customer
-	db.First(&customer)
-	
-	log.Println(customer)
 }
