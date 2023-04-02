@@ -29,7 +29,7 @@ type Customer struct {
 
 type Contact struct {
 	ID          uint     
-	// ContactType ContactType `gorm:"column:contact_type;type:ENUM=('CEO','Commercial','Finance');NOT NULL"`
+	ContactType string `gorm:"column:contact_type;NOT NULL;type:enum('Commercial','Finance','Legal','CEO','Other','DPO','Technical')"`
 	FirstName   string   `gorm:"NOT NULL"`
 	LastName    string   `gorm:"NOT NULL"`
 	NickName    string   `gorm:"NOT NULL"`
@@ -53,7 +53,7 @@ type Address struct {
 	ID              uint    
 	CustomerID      uint	`gorm:"NOT NULL"`
 	Customer 		Customer`gorm:"NOT NULL"`
-	// Type            UnSupport `gorm:"column:type;NOT NULL"`
+	Type            string 	`gorm:";NOT NULL;type:enum('legal','branch','contact')"`
 	Address         string	`gorm:"NOT NULL"`
 	Pobox           string 	`gorm:"NOT NULL"`
 	PostalCode      string 	`gorm:"NOT NULL"`
