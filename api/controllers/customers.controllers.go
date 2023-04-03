@@ -11,18 +11,18 @@ import (
 var db, _ = database.GetDB()
 
 type Customer struct {
-	ID                 uint  	 `json:"id" binding:"number"`
+	ID                 uint  	 `json:"id" binding:"numeric"`
 	Active             *bool   	 `json:"active" binding:"required,boolean"`
-	Name               string 	 `json:"name" binding:"required"`
-	ShortName          string	 `json:"shortName" binding:"required"`
-	VatNumber          string	 `json:"vatNumber" binding:"required"`
-	VatApply           *bool	 	 `json:"vatApply" binding:"boolean"`
-	RegistrationNumber string	 `json:"registrationNumber" binding:"required"`
-	DunsNumber         string	 `json:"dunsNumber" binding:"required"`
+	Name               string 	 `json:"name" binding:"required,max=100"`
+	ShortName          string	 `json:"shortName" binding:"required,max=50"`
+	VatNumber          string	 `json:"vatNumber" binding:"required,numeric"`
+	VatApply           *bool	 `json:"vatApply" binding:"boolean"`
+	RegistrationNumber string	 `json:"registrationNumber" binding:"required,numeric"`
+	DunsNumber         string	 `json:"dunsNumber" binding:"required,numeric"`
 	TaxExempt          *bool   	 `json:"taxExempt" binding:"boolean"`
 	Language           string	 `json:"language" binding:"required,bcp47_language_tag"`
 	Email              string	 `json:"email" binding:"required,email"`
-	Phone              string	 `json:"phone" binding:"required"`
+	Phone              string	 `json:"phone" binding:"required,numeric"`
 	Fax                string	 `json:"fax" binding:"required"`
 }
 
