@@ -10,7 +10,7 @@ type Customer struct {
 	Name               string 	 `gorm:"NOT NULL"`
 	ShortName          string	 `gorm:"NOT NULL"`
 	VatNumber          string	 `gorm:"NOT NULL"`
-	VatApply           string	 `gorm:"NOT NULL"`
+	VatApply           bool	 	 `gorm:"NOT NULL"`
 	RegistrationNumber string	 `gorm:"NOT NULL"`
 	DunsNumber         string	 `gorm:"NOT NULL"`
 	TaxExempt          bool   	 `gorm:"NOT NULL"`

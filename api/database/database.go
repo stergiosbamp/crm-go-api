@@ -20,7 +20,5 @@ func GetDB() (*gorm.DB, error) {
 		log.Fatal(err.Error())
 	}
 
-	// Maybe AutoMigrate here...
-
 	return db, err
 }
