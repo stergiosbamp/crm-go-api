@@ -16,7 +16,7 @@ func RegisterRoutes() {
 	v1.GET("/customers/:id", controllers.GetCustomer)
 	v1.POST("/customers", controllers.CreateCustomer)
 	v1.PUT("/customers/:id", controllers.UpdateOrCreateCustomer)
-	// TODO: PATCH
+	v1.PATCH("/customers/:id", controllers.PatchCustomer)
 	v1.DELETE("/customers/:id", controllers.DeleteCustomer)
 	// TODO: IMPORT
 	// TODO: EXPORT

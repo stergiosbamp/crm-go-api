@@ -30,6 +30,10 @@ type URI struct {
 	ID  uint `uri:"id" binding:"required"`
 }
 
+type PatchActiveBody struct {
+	Active             *bool   	 `json:"active" binding:"required,boolean"`
+}
+
 func GetCustomer(ctx *gin.Context) {
 	var uri URI
 	var customer Customer
@@ -106,6 +110,43 @@ func UpdateOrCreateCustomer(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, updatedCustomer)
+}
+
+func PatchCustomer(ctx *gin.Context) {
+	var uri URI
+	var customer Customer
+	var patchBody PatchActiveBody
+
+	if err := ctx.ShouldBindUri(&uri); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	id := uri.ID
+	res := db.Where("id = ?", id).First(&customer)
+	
+	if res.Error != nil{
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Couldn't find customer with ID %v", id)})
+		return
+	}
+	
+	// ADD BUSINESS LOGIC THAT CANNOT ACTIVATE A CUSTOMER WITHOUT HAVING IN DB A LEGAL ADDRESS.
+	
+	if err := ctx.BindJSON(&patchBody); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Update his status
+	customer.Active = patchBody.Active
+	
+	res = db.Save(&customer)
+	if res.Error != nil{
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Couldn't find customer with ID %v", id)})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, customer)
 }
 
 func DeleteCustomer(ctx *gin.Context) {
