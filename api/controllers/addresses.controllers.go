@@ -33,7 +33,7 @@ func GetAddress(ctx *gin.Context) {
 	res := db.Where("id = ?", id).First(&address)
 	
 	if res.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Customer with ID %v not found.", id)})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Address with ID %v not found.", id)})
 		return
 	}
 
