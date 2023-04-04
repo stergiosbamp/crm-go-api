@@ -9,8 +9,8 @@ import (
 
 type Address struct {
 	ID                 	uint  	 `json:"id" binding:"numeric"`
-	CustomerID         	*uint    `json:"customerId" binding:"omitempty"`  // Pointer since it can be null when refereing to contacts' addresses, otherwise it defaults to customerId: 0
-	Type				string	 `json:"type" binding:"required,alpha"`
+	CustomerID         	*uint    `json:"customerId" binding:"excluded_unless=Type contact"`  // Pointer since it can be null when refereing to contacts' addresses, otherwise it defaults to customerId: 0
+	Type				string	 `json:"type" binding:"required,oneof=legal branch contact"`
 	Address         	string	 `json:"address" binding:"required"`
 	Pobox           	string	 `json:"pobox" binding:"required,numeric"`
 	PostalCode      	string	 `json:"postalCode" binding:"required,numeric"`
