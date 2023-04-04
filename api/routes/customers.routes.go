@@ -6,7 +6,6 @@ import (
 	"github.com/stergiosbamp/go-api/controllers"
 )
 
-
 // Routes function to serve endpoints
 func RegisterRoutes() {
 	route := gin.Default()
@@ -16,7 +15,7 @@ func RegisterRoutes() {
 	v1.GET("/customers", controllers.GetCustomers)
 	v1.GET("/customers/:id", controllers.GetCustomer)
 	v1.POST("/customers", controllers.CreateCustomer)
-	v1.PUT("/customers/:id", controllers.UpdateCustomer)
+	v1.PUT("/customers/:id", controllers.UpdateOrCreateCustomer)
 	// TODO: PATCH
 	v1.DELETE("/customers/:id", controllers.DeleteCustomer)
 	// TODO: IMPORT

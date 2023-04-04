@@ -81,7 +81,7 @@ func CreateCustomer(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, customer)
 }
 
-func UpdateCustomer(ctx *gin.Context) {
+func UpdateOrCreateCustomer(ctx *gin.Context) {
 	var uri URI
 	var updatedCustomer Customer
 
