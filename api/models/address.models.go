@@ -2,8 +2,8 @@ package models
 
 type Address struct {
 	ID              uint    
-	CustomerID      uint	`gorm:"NOT NULL"`
-	Customer 		Customer`gorm:"NOT NULL"`
+	CustomerID      uint	// NULLABLE since it also serves contacts' addresses
+	Customer 		Customer
 	Type            string 	`gorm:";NOT NULL;type:enum('legal','branch','contact')"`
 	Address         string	`gorm:"NOT NULL"`
 	Pobox           string 	`gorm:"NOT NULL"`
