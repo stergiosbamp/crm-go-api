@@ -1,0 +1,287 @@
+components:
+  schemas:
+    Customer:
+      type: object
+      required:
+        - id
+        - active
+        - name
+        - shortName
+        - vatNumber
+        - vatApply
+        - registrationNumber
+        - dunsNumber
+        - taxExempt
+        - language
+        - email
+        - phone
+        - fax
+      properties:
+        id:
+          type: integer
+          example: 32
+        active:
+          type: boolean
+          example: true
+        name:
+          type: string
+          example: Test Inc.
+        shortName:
+          type: string
+          example: tt01
+        vatNumber:
+          type: string
+          example: 265 478
+        vatApply:
+          type: boolean
+          example: true
+        registrationNumber:
+          type: string
+          example: 24378253
+        dunsNumber:
+          type: string
+          example: 23678167
+        taxExempt:
+          type: boolean
+          example: false
+        language:
+          type: string
+          example: en
+        email:
+          type: string
+          example: test@test.com
+        phone:
+          type: string
+          example: 38162558587
+        fax:
+          type: string
+          example: 23467237868
+
+    CustomerPost:
+      type: object
+      required:
+        - active
+        - name
+        - shortName
+        - vatNumber
+        - vatApply
+        - registrationNumber
+        - dunsNumber
+        - taxExempt
+        - language
+        - email
+        - phone
+        - fax
+      properties:
+        active:
+          type: boolean
+          example: true
+        name:
+          type: string
+          example: Test Inc.
+        shortName:
+          type: string
+          example: tt01
+        vatNumber:
+          type: string
+          example: 265 478
+        vatApply:
+          type: boolean
+          example: true
+        registrationNumber:
+          type: string
+          example: 24378253
+        dunsNumber:
+          type: string
+          example: 23678167
+        taxExempt:
+          type: boolean
+          example: false
+        language:
+          type: string
+          example: en
+        email:
+          type: string
+          example: test@test.com
+        phone:
+          type: string
+          example: 38162558587
+        fax:
+          type: string
+          example: 23467237868
+
+    CustomerPut:
+      type: object
+      required:
+        - active
+        - name
+        - shortName
+        - vatNumber
+        - vatApply
+        - registrationNumber
+        - dunsNumber
+        - taxExempt
+        - language
+        - email
+        - phone
+        - fax
+      properties:
+        active:
+          type: boolean
+          example: true
+        name:
+          type: string
+          example: Test Inc.
+        shortName:
+          type: string
+          example: tt02
+        vatNumber:
+          type: string
+          example: 265 478
+        vatApply:
+          type: boolean
+          example: true
+        registrationNumber:
+          type: string
+          example: 24378253
+        dunsNumber:
+          type: string
+          example: 23678167
+        taxExempt:
+          type: boolean
+          example: false
+        language:
+          type: string
+          example: gr
+        email:
+          type: string
+          example: test2@test2.com
+        phone:
+          type: string
+          example: 38162558587
+        fax:
+          type: string
+          example: 23467237868
+
+    CustomerPutResponse:
+      type: object
+      required:
+        - id
+        - active
+        - name
+        - shortName
+        - vatNumber
+        - vatApply
+        - registrationNumber
+        - dunsNumber
+        - taxExempt
+        - language
+        - email
+        - phone
+        - fax
+      properties:
+        id:
+          type: integer
+          example: 12
+        active:
+          type: boolean
+          example: true
+        name:
+          type: string
+          example: Test Inc.
+        shortName:
+          type: string
+          example: tt02
+        vatNumber:
+          type: string
+          example: 265 478
+        vatApply:
+          type: boolean
+          example: true
+        registrationNumber:
+          type: string
+          example: 24378253
+        dunsNumber:
+          type: string
+          example: 23678167
+        taxExempt:
+          type: boolean
+          example: false
+        language:
+          type: string
+          example: gr
+        email:
+          type: string
+          example: test2@test2.com
+        phone:
+          type: string
+          example: 38162558587
+        fax:
+          type: string
+          example: 23467237868
+
+    CustomerPatch:
+      type: object
+      required:
+        - active
+      properties:
+        active:
+          type: boolean
+          example: false
+
+    CustomerPatchResponse:
+      type: object
+      required:
+        - id
+        - active
+        - name
+        - shortName
+        - vatNumber
+        - vatApply
+        - registrationNumber
+        - dunsNumber
+        - taxExempt
+        - language
+        - email
+        - phone
+        - fax
+      properties:
+        id:
+          type: integer
+          example: 12
+        active:
+          type: boolean
+          example: false
+        name:
+          type: string
+          example: Test Inc.
+        shortName:
+          type: string
+          example: tt01
+        vatNumber:
+          type: string
+          example: 265 478
+        vatApply:
+          type: boolean
+          example: true
+        registrationNumber:
+          type: string
+          example: 24378253
+        dunsNumber:
+          type: string
+          example: 23678167
+        taxExempt:
+          type: boolean
+          example: false
+        language:
+          type: string
+          example: en
+        email:
+          type: string
+          example: test@test.com
+        phone:
+          type: string
+          example: 38162558587
+        fax:
+          type: string
+          example: 23467237868

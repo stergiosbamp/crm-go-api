@@ -1,0 +1,245 @@
+components:
+  schemas:
+    AddressContactPost:
+      type: object
+      required:
+        - type
+        - address
+        - pobox
+        - postalCode
+        - city
+        - province
+        - country
+      properties:
+        type:
+          type: string
+          example: contact
+        address:
+          type: string
+          example: Balkanska 3
+        pobox:
+          type: string
+          example: 123585
+        postalCode:
+          type: string
+          example: 523323
+        city:
+          type: string
+          example: Paracin
+        province:
+          type: string
+          example: Pomoravlje
+        country:
+          type: string
+          example: Serbia
+    
+    AddressCustomerPost:
+      type: object
+      required:
+        - type
+        - address
+        - pobox
+        - postalCode
+        - city
+        - province
+        - country
+        - customerId
+      properties:
+        type:
+          type: string
+          example: legal
+          enum:
+            - legal
+            - branch
+        address:
+          type: string
+          example: Balkanska 3
+        pobox:
+          type: string
+          example: 123585
+        postalCode:
+          type: string
+          example: 523323
+        city:
+          type: string
+          example: Paracin
+        province:
+          type: string
+          example: Pomoravlje
+        country:
+          type: string
+          example: Serbia
+        attentionPerson:
+          type: string
+          example: CH
+        customerId:
+          type: integer
+          example: 32
+
+    AddressPut:
+      type: object
+      required:
+        - type
+        - address
+        - pobox
+        - postalCode
+        - city
+        - province
+        - country
+        - customerId
+      properties:
+        type:
+          type: string
+          example: branch
+        address:
+          type: string
+          example: Müllerenstrasse 3
+        pobox:
+          type: string
+          example: 123585
+        postalCode:
+          type: string
+          example: 523323
+        city:
+          type: string
+          example: Berlin
+        province:
+          type: string
+          example: Berlin123
+        country:
+          type: string
+          example: Germany
+        attentionPerson:
+          type: string
+          example: CH
+        customerId:
+          type: integer
+          example: 32
+
+    AddressPutResponse:
+      type: object
+      required:
+        - id
+        - type
+        - address
+        - pobox
+        - postalCode
+        - city
+        - province
+        - country
+        - customerId
+      properties:
+        id:
+          type: integer
+          example: 88
+        type:
+          type: string
+          example: branch
+        address:
+          type: string
+          example: Müllerenstrasse 3
+        pobox:
+          type: string
+          example: 123585
+        postalCode:
+          type: string
+          example: 523323
+        city:
+          type: string
+          example: Berlin
+        province:
+          type: string
+          example: Berlin123
+        country:
+          type: string
+          example: Germany
+        attentionPerson:
+          type: string
+          example: CH
+        customerId:
+          type: integer
+          example: 32
+
+    AddressContact:
+      type: object
+      required:
+        - id
+        - type
+        - address
+        - pobox
+        - postalCode
+        - city
+        - province
+        - country
+      properties:
+        id:
+          type: integer
+          example: 5
+        type:
+          type: string
+          example: contact
+        address:
+          type: string
+          example: Balkanska 3
+        pobox:
+          type: string
+          example: 123585
+        postalCode:
+          type: string
+          example: 523323
+        city:
+          type: string
+          example: Paracin
+        province:
+          type: string
+          example: Pomoravlje
+        country:
+          type: string
+          example: Serbia
+
+    AddressCustomer:
+      type: object
+      required:
+        - id
+        - type
+        - address
+        - pobox
+        - postalCode
+        - city
+        - province
+        - country
+        - customerId
+      properties:
+        id:
+          type: integer
+          example: 7
+        type:
+          type: string
+          example: legal
+          enum:
+            - legal
+            - branch
+        address:
+          type: string
+          example: Bolacker 1
+        pobox:
+          type: string
+          example: 123585
+        postalCode:
+          type: string
+          example: 4563
+        city:
+          type: string
+          example: Paracin
+        province:
+          type: string
+          example: Pomoravlje
+        country:
+          type: string
+          example: Serbia
+        attentionPerson:
+          type: string
+          example: CH
+        customerId:
+          type: integer
+          example: 32

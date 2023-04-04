@@ -1,0 +1,613 @@
+openapi: 3.0.0
+
+info:
+  title: Customer Management API
+  description: |-
+    API for Customer Management.
+  version: 0.0.1
+
+servers:
+  - url: http://localhost:8080/v1
+    description: A localy developed API, e.g. Development (local) server
+
+tags:
+  - name: Customers
+    description: Managing customers
+  - name: Contacts
+    description: Managing contacts
+  - name: Addresses
+    description: Managing addresses
+
+paths:
+  # Customers Management
+  /customers:
+    get:
+      tags:
+        - Customers
+      summary: Returns a list of customers.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              # TODO: Add pagination later
+              schema:
+                type: array
+                items:  
+                  $ref: "./customers/schemas.yaml#/components/schemas/Customer"
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+    post:
+      tags:
+       - Customers
+      summary: Creates a new customer.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "./customers/schemas.yaml#/components/schemas/CustomerPost"
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "./customers/schemas.yaml#/components/schemas/Customer"
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+            
+  /customers/{id}:
+    get:
+      tags:
+        - Customers
+      summary: Returns a customer for a given ID.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the customer to return
+          required: true
+          schema:
+            format: integer
+        
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              # TODO: Add pagination later
+              schema:
+                $ref: './customers/schemas.yaml#/components/schemas/Customer'
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+    put:
+      tags:
+        - Customers
+      summary: Updates a customer for a given ID.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the customer to return
+          required: true
+          schema:
+            format: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "./customers/schemas.yaml#/components/schemas/CustomerPut"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "./customers/schemas.yaml#/components/schemas/CustomerPutResponse"
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+    patch:
+      tags:
+        - Customers
+      summary: Patches (status change) a customer for a given ID.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the customer to patch
+          required: true
+          schema:
+            format: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "./customers/schemas.yaml#/components/schemas/CustomerPatch"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "./customers/schemas.yaml#/components/schemas/CustomerPatchResponse"
+    delete:
+      tags:
+        - Customers
+      summary: Deletes a customer for a given ID.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the customer to patch
+          required: true
+          schema:
+            format: integer
+      responses:
+        '204':
+          description: Delete success
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+
+  /customers/import:
+    post:
+      tags:
+        - Customers
+      summary: Imports customers from CSV/XLSX files.
+      requestBody:
+        description: Upload the file with customers for import
+        content:
+           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportError'
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+  
+  /customers/export:
+    get:
+      tags:
+        - Customers
+      summary: Exports customers from database to CSV/XLSX files.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+
+  # Contacts Management
+  /contacts:
+    get:
+      tags:
+        - Contacts
+      summary: Returns a list of contacts.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              # TODO: Add pagination later
+              schema:
+                type: array
+                items:  
+                  $ref: "./contacts/schemas.yaml#/components/schemas/Contact"
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+    post:
+      tags:
+       - Contacts
+      summary: Creates a new contact.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "./contacts/schemas.yaml#/components/schemas/ContactPost"
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "./contacts/schemas.yaml#/components/schemas/Contact"
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+
+  /contacts/{id}:
+    get:
+      tags:
+        - Contacts
+      summary: Returns a contact for a given ID.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the contact to return
+          required: true
+          schema:
+            format: integer
+        
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              # TODO: Add pagination later
+              schema:
+                $ref: "./contacts/schemas.yaml#/components/schemas/Contact"
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+    put:
+      tags:
+        - Contacts
+      summary: Updates a contact for a given ID.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the contact to return
+          required: true
+          schema:
+            format: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "./contacts/schemas.yaml#/components/schemas/ContactPut"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "./contacts/schemas.yaml#/components/schemas/ContactPutResponse"
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+    patch:
+      tags:
+        - Contacts
+      summary: Patches a contact for a given ID.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the contact to patch
+          required: true
+          schema:
+            format: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "./contacts/schemas.yaml#/components/schemas/ContactPatch"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "./contacts/schemas.yaml#/components/schemas/ContactPatchResponse"
+    delete:
+      tags:
+        - Contacts
+      summary: Deletes a contact for a given ID.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the contact to patch
+          required: true
+          schema:
+            format: integer
+      responses:
+        '204':
+          description: Delete success
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+
+  /contacts/import:
+    post:
+      tags:
+        - Contacts
+      summary: Imports contacts from CSV/XLSX files.
+      requestBody:
+        description: Upload the file with contacts for import
+        content:
+           multipart/form-data:
+            schema:
+              type: object
+              required:
+                - customerId
+                - filePath
+              properties:
+                customerId:
+                  type: integer
+                  description: The customer id for whom to import it's contacts
+                  example: 32
+                filePath:
+                  type: string
+                  description: The file path of the CSV/EXCEL file to upload and import
+                  format: binary
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportError'
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+
+  /contacts/export:
+    get:
+      tags:
+        - Contacts
+      summary: Exports contacts from database to CSV/XLSX files.
+      parameters:
+        - name: id
+          in: query
+          description: |- 
+            ID of the customer for whom to export contacts. 
+            
+            If omitted, it exports the contacts for all the available customers.
+          schema:
+            format: integer
+      responses:
+        '200':
+          description: Success
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+  
+  # Addresses Management
+  /addresses:
+    get:
+      tags:
+        - Addresses
+      summary: Returns a list of addresses.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              # TODO: Add pagination later
+              schema:
+                type: array
+                items:
+                  oneOf:
+                    - $ref: "./addresses/schemas.yaml#/components/schemas/AddressCustomer"
+                    - $ref: "./addresses/schemas.yaml#/components/schemas/AddressContact"
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+    post:
+      tags:
+       - Addresses
+      summary: Creates a new address.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: "./addresses/schemas.yaml#/components/schemas/AddressCustomerPost"
+                - $ref: "./addresses/schemas.yaml#/components/schemas/AddressContactPost"
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "./addresses/schemas.yaml#/components/schemas/AddressCustomer"
+                  - $ref: "./addresses/schemas.yaml#/components/schemas/AddressContact"
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+
+  /addresses/{id}:
+    get:
+      tags:
+        - Addresses
+      summary: Returns an address for a given ID.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the address to return
+          required: true
+          schema:
+            format: integer
+        
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              # TODO: Add pagination later
+              schema:
+                oneOf:
+                  - $ref: "./addresses/schemas.yaml#/components/schemas/AddressContact"
+                  - $ref: "./addresses/schemas.yaml#/components/schemas/AddressCustomer"
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+    put:
+      tags:
+        - Addresses
+      summary: Updates an address for a given ID.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the contact to return
+          required: true
+          schema:
+            format: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "./addresses/schemas.yaml#/components/schemas/AddressPut"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "./addresses/schemas.yaml#/components/schemas/AddressPutResponse"
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+    delete:
+      tags:
+        - Addresses
+      summary: Deletes an address for a given ID.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the contact to patch
+          required: true
+          schema:
+            format: integer
+      responses:
+        '204':
+          description: Delete success
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+
+  /addresses/export:
+    get:
+      tags:
+        - Addresses
+      summary: Exports addresses from database to CSV/XLSX files.
+      parameters:
+        - name: type
+          in: query
+          description: type
+          required: true
+          schema:
+            enum:
+              - contact
+              - customer
+        - name: id
+          in: query
+          description: |-
+            ID of the customer or contact for whom to export addresses.
+
+            If omitted, it exports the addresses for all the available customers or contacts depending on the
+            `type` query parameter.
+          schema:
+            format: integer
+      responses:
+        '200':
+          description: Success
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponse'
+
+components:
+  schemas:
+    
+    DefaultResponse:
+      type: object
+      properties:
+        errorCode:
+          type: integer
+        message:
+          type: string
+    
+    ImportError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Email is in incorrect format.
+    
