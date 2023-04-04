@@ -10,6 +10,6 @@ func main() {
 	db, _ := database.GetDB()
 	db.AutoMigrate(&models.Customer{}, &models.Contact{}, &models.Address{})
 	
-	routes.RegisterRoutes()
+	routes.InitRoutes()
 
 }
