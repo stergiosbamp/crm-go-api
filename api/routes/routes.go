@@ -9,7 +9,7 @@ func InitRoutes() {
 
 	RegisterCustomersRoutes(v1)
 	RegisterAddressesRoutes(v1)
-	// REGISTER CONTACTS
+	RegisterContactsRoutes(v1)
 
 	route.Run()
 }
