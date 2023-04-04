@@ -11,7 +11,7 @@ type Contact struct {
 	LastName    string   `gorm:"NOT NULL"`
 	NickName    string   `gorm:"NOT NULL"`
 	Gender      string   `gorm:"NOT NULL"`
-	Birthday    time.Time`gorm:"NOT NULL"`
+	Birthday    time.Time`gorm:"NOT NULL;type:date"`
 	Language    string   `gorm:"size:2;NOT NULL"`
 	JobTitle    string   `gorm:"NOT NULL"`
 	Email       string   `gorm:"NOT NULL"`
