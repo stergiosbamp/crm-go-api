@@ -60,11 +60,44 @@ func CreateAddress(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	
-	res := db.Create(&address)
 
-	if res.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", res.Error)})
+	// Check if payload contains a customerId. If not it's meant for a contact.
+	if address.CustomerID != nil {
+		
+		customerId := address.CustomerID
+		// Customer exists?
+		var customer Customer
+		res := db.First(&customer, customerId)
+		if res.Error != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Customer with id: %v doesn't exist", *customerId)})
+			return
+		}
+		
+		// We need validation only for "legal" address. Branch addresses must be created whether a customer is active or inactive.
+		if address.Type == "legal" {
+			
+			// Is customer active?
+			if !*(customer.Active){
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Customer with id: %v is not active", *customerId)})
+				return
+			}
+			
+			// Does customer already have a legal address?
+			var legalAddress Address
+			res := db.Where("customer_id = ? AND type = ?", customerId, "legal").First(&legalAddress)
+			if res.Error == nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Customer with id: %v has already a legal address.", *customerId)})
+				return
+			}
+		}
+		// set the customer ID for the address
+		address.CustomerID = customerId
+	}
+
+	resCreate := db.Create(&address)
+
+	if resCreate.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", resCreate.Error)})
 		return
 	}
 
