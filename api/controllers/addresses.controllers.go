@@ -157,13 +157,23 @@ func DeleteAddress(ctx *gin.Context) {
 
 	id := uri.ID
 
-	res := db.Where("id = ?", id).Unscoped().Delete(&address)
-
-	// ADD LOGIC WHEN DELETING A 'LEGAL' BRANCH TO CHANGE (OR NOT) THE CUSTOMER 'active' STATUS.
+	res := db.First(&address, id)
 	if res.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", res.Error)})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Address with id: %v doesn't exist", uri.ID)})
 		return
 	}
-
+	
+	// To delete a "legal" branch you must first set customer to inactive.
+	if address.Type == "legal" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Cannot delete a legal branch. Set customer with id: %v to inactive first.", *address.CustomerID)})
+		return
+	}
+	
+	resDelete := db.Delete(&address)
+	if res.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", resDelete.Error.Error())})
+		return
+	}
+	
 	ctx.JSON(http.StatusNoContent, address)
 }
