@@ -105,7 +105,12 @@ func CreateAddress(ctx *gin.Context) {
 }
 
 func UpdateOrCreateAddress(ctx *gin.Context) {
+	// Update operation is easy to break the integrity of type of addresses 
+	// between customers. That's why it doesn't allow changing types.
+	// If you want to change type, create a new one and delete the old one.
+
 	var uri URI
+	var oldAddress Address
 	var updatedAdress Address
 
 	if err := ctx.ShouldBindUri(&uri); err != nil {
@@ -118,13 +123,23 @@ func UpdateOrCreateAddress(ctx *gin.Context) {
 		return
 	}
 
-	// Assign the ID for Update or Create
-	updatedAdress.ID = uri.ID
-
-	res := db.Save(&updatedAdress)
+	res := db.First(&oldAddress, uri.ID)
 	
 	if res.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", res.Error)})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Address with id: %v doesn't exist", uri.ID)})
+		return
+	}
+	
+	if oldAddress.Type != updatedAdress.Type {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Can't change type of address from %v to %v", oldAddress.Type, updatedAdress.Type)})
+		return
+	}
+
+	updatedAdress.ID = uri.ID
+	resUpdate := db.Save(&updatedAdress)
+	
+	if resUpdate.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", resUpdate.Error.Error())})
 		return
 	}
 
