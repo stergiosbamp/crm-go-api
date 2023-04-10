@@ -21,7 +21,7 @@ type Contact struct {
 	Mobile      string   `gorm:"NOT NULL"`
 	Notes       string   `gorm:"NOT NULL"`
 	CustomerID  uint     `gorm:"NOT NULL"`
-	Customer 	Customer `gorm:"NOT NULL"`
+	Customer 	Customer `gorm:"NOT NULL;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	AddressID   uint    
-	Address 	Address 
+	Address 	Address  `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }

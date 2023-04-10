@@ -121,7 +121,6 @@ func DeleteContact(ctx *gin.Context) {
 	
 	res := db.Where("id = ?", id).Unscoped().Delete(&contact)
 
-	// ADD LOGIC WHEN DELETING A 'LEGAL' BRANCH TO CHANGE (OR NOT) THE CUSTOMER 'active' STATUS.
 	if res.Error != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", res.Error)})
 		return
