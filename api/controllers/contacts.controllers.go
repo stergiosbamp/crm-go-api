@@ -56,7 +56,7 @@ func GetContacts(ctx *gin.Context) {
 	res := db.Find(&contacts)
 	
 	if res.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", res.Error)})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", res.Error.Error())})
 		return
 	}
 
@@ -65,16 +65,29 @@ func GetContacts(ctx *gin.Context) {
 
 func CreateContact(ctx *gin.Context) {
 	var contact Contact
+	var address Address
 
 	if err := ctx.ShouldBindJSON(&contact); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	
-	res := db.Create(&contact)
-
+	// Shouldn't assign an address id to one that refers to a contact
+	addressId := contact.AddressID
+	res := db.First(&address, addressId)
 	if res.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", res.Error)})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Address with id: %v doesn't exist", addressId)})
+		return
+	}
+
+	if address.Type != "contact" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Address with id: %v refers to a customer's address and not to a contact", addressId)})
+		return
+	}
+
+	resCreate := db.Create(&contact)
+	if resCreate.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", resCreate.Error.Error())})
 		return
 	}
 
@@ -84,6 +97,7 @@ func CreateContact(ctx *gin.Context) {
 func UpdateOrCreateContact(ctx *gin.Context) {
 	var uri URI
 	var updatedContact Contact
+	var address Address
 
 	if err := ctx.ShouldBindUri(&uri); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -94,14 +108,27 @@ func UpdateOrCreateContact(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	
+	// Shouldn't assign an address id to one that refers to a contact
+	addressId := updatedContact.AddressID
+	res := db.First(&address, addressId)
+	if res.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Address with id: %v doesn't exist", addressId)})
+		return
+	}
+
+	if address.Type != "contact" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Address with id: %v refers to a customer's address and not to a contact", addressId)})
+		return
+	}
 
 	// Assign the ID for Update or Create
 	updatedContact.ID = uri.ID
 
-	res := db.Save(&updatedContact)
+	resUpdate := db.Save(&updatedContact)
 	
-	if res.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", res.Error)})
+	if resUpdate.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", resUpdate.Error.Error())})
 		return
 	}
 
@@ -122,7 +149,7 @@ func DeleteContact(ctx *gin.Context) {
 	res := db.Where("id = ?", id).Unscoped().Delete(&contact)
 
 	if res.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", res.Error)})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", res.Error.Error())})
 		return
 	}
 

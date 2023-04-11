@@ -11,7 +11,6 @@ func RegisterContactsRoutes(rg *gin.RouterGroup) {
 	rg.GET("/contacts/:id", controllers.GetContact)
 	rg.POST("/contacts", controllers.CreateContact)
 	rg.PUT("/contacts/:id", controllers.UpdateOrCreateContact)
-	// TODO: PATCH (?)
 	rg.DELETE("/contacts/:id", controllers.DeleteContact)
 	// TODO: IMPORT
 	// TODO: EXPORT
