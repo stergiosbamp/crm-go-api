@@ -147,7 +147,7 @@ func UpdateCustomer(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, customerUpdated)
+	ctx.JSON(http.StatusOK, customerUpdated)
 }
 
 func PatchCustomer(ctx *gin.Context) {
