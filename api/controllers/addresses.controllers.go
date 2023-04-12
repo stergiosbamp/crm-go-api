@@ -209,11 +209,11 @@ func DeleteAddress(ctx *gin.Context) {
 		return
 	}
 	
-	addressDAO.Delete(uri.ID)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", err.Error())})
+	errDeleted := addressDAO.Delete(uri.ID)
+	if errDeleted != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", errDeleted.Error())})
 		return
 	}
 	
-	ctx.JSON(http.StatusNoContent, address)
+	ctx.JSON(http.StatusNoContent, gin.H{"":""})
 }
