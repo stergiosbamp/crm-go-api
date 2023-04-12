@@ -5,11 +5,15 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/stergiosbamp/go-api/dao"
+	"github.com/stergiosbamp/go-api/models"
 )
 
-type Address struct {
+var addressDAO = dao.NewAddressDAO()
+
+type AddressRequest struct {
 	ID              uint    `json:"id" binding:"numeric"`
-	CustomerID      *uint   `json:"customerId" binding:"excluded_unless=Type contact"` // Pointer since it can be null when refereing to contacts' addresses, otherwise it defaults to customerId: 0
+	CustomerID      *uint   `json:"customerId" binding:"excluded_unless=Type contact"` // Pointer since it can be null when referring to contacts' addresses, otherwise it defaults to customerId: 0
 	Type            string  `json:"type" binding:"required,oneof=legal branch contact"`
 	Address         string  `json:"address" binding:"required"`
 	Pobox           string  `json:"pobox" binding:"required,numeric"`
@@ -22,17 +26,16 @@ type Address struct {
 
 func GetAddress(ctx *gin.Context) {
 	var uri URI
-	var address Address
 
 	if err := ctx.ShouldBindUri(&uri); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	
 	id := uri.ID
-
-	res := db.Where("id = ?", id).First(&address)
-
-	if res.Error != nil {
+	address, err := addressDAO.GetById(id)
+	
+	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Address with ID %v not found.", id)})
 		return
 	}
@@ -41,12 +44,10 @@ func GetAddress(ctx *gin.Context) {
 }
 
 func GetAddresses(ctx *gin.Context) {
-	var addresses []Address
-
-	res := db.Find(&addresses)
-
-	if res.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", res.Error)})
+	addresses, err := addressDAO.GetList()
+	
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", err.Error())})
 		return
 	}
 
@@ -54,114 +55,153 @@ func GetAddresses(ctx *gin.Context) {
 }
 
 func CreateAddress(ctx *gin.Context) {
-	var address Address
+	var addressReq AddressRequest
+	var address models.Address
 
-	if err := ctx.ShouldBindJSON(&address); err != nil {
+	if err := ctx.ShouldBindJSON(&addressReq); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	// Check if payload contains a customerId. If not it's meant for a contact.
-	if address.CustomerID != nil {
-
-		customerId := address.CustomerID
+	if addressReq.CustomerID != nil {
+		
 		// Customer exists?
-		var customer Customer
-		res := db.First(&customer, customerId)
-		if res.Error != nil {
+		customerId := addressReq.CustomerID
+		customer, err := customerDAO.GetById(*customerId)
+		if err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Customer with id: %v doesn't exist", *customerId)})
 			return
 		}
 
 		// We need validation only for "legal" address. Branch addresses must be created whether a customer is active or inactive.
-		if address.Type == "legal" {
+		if addressReq.Type == "legal" {
 
 			// Is customer active?
-			if !*(customer.Active) {
+			if !(customer.Active) {
 				ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Customer with id: %v is not active", *customerId)})
 				return
 			}
 
 			// Does customer already have a legal address?
-			var legalAddress Address
-			res := db.Where("customer_id = ? AND type = ?", customerId, "legal").First(&legalAddress)
-			if res.Error == nil {
+			_, err := addressDAO.FindAddress(*customerId, addressReq.Type)
+
+			// If err is not nil, it means it failed to find an address, thus customer doesn't have an address.
+			if err == nil {
 				ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Customer with id: %v has already a legal address.", *customerId)})
 				return
 			}
 		}
-		// set the customer ID for the address
-		address.CustomerID = customerId
+		
+		// Populate an Address model from request data
+		address = models.Address{
+			CustomerID: addressReq.CustomerID,
+			Type: addressReq.Type,
+			Address: addressReq.Address,
+			Pobox: addressReq.Pobox,
+			PostalCode: addressReq.PostalCode,
+			City: addressReq.City,
+			Province: addressReq.Province,
+			Country: addressReq.Country,
+			AttentionPerson: addressReq.AttentionPerson,
+		}
+		
+	} else {
+		// Address refers to contact so omit customer data
+		address = models.Address {
+			Type: addressReq.Type,
+			Address: addressReq.Address,
+			Pobox: addressReq.Pobox,
+			PostalCode: addressReq.PostalCode,
+			City: addressReq.City,
+			Province: addressReq.Province,
+			Country: addressReq.Country,
+		}
 	}
 
-	resCreate := db.Create(&address)
+	addressCreated, err := addressDAO.Create(&address)
 
-	if resCreate.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", resCreate.Error)})
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", err.Error())})
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, address)
+	// You can also later define a new struct for response data (e.g. AddressResponse) 
+	// in order to omit the empty Customer field which is created from the model in the create operation.
+	ctx.JSON(http.StatusCreated, addressCreated)
 }
 
+// Update operation is easy to break the integrity of type of addresses
+// between customers. That's why it doesn't allow changing types.
+// If you want to change type, create a new one and delete the old one.
 func UpdateAddress(ctx *gin.Context) {
-	// Update operation is easy to break the integrity of type of addresses
-	// between customers. That's why it doesn't allow changing types.
-	// If you want to change type, create a new one and delete the old one.
-
 	var uri URI
-	var oldAddress Address
-	var updatedAdress Address
+	var oldAddress models.Address
+	var addressReq AddressRequest
 
 	if err := ctx.ShouldBindUri(&uri); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if err := ctx.ShouldBindJSON(&updatedAdress); err != nil {
+	if err := ctx.ShouldBindJSON(&addressReq); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	res := db.First(&oldAddress, uri.ID)
+	oldAddress, err := addressDAO.GetById(uri.ID)
 
-	if res.Error != nil {
+	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Address with id: %v doesn't exist", uri.ID)})
 		return
 	}
 
-	if oldAddress.Type != updatedAdress.Type {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Can't change type of address from %v to %v", oldAddress.Type, updatedAdress.Type)})
+	// Business logic: Do not allow changing types, because
+	// if changing from a branch to legal is forbidden
+	// if changing from legal to branch then client must also call API to deactivate customer
+	if oldAddress.Type != addressReq.Type {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Can't change type of address from %v to %v", oldAddress.Type, addressReq.Type)})
 		return
 	}
 
-	updatedAdress.ID = uri.ID
-	resUpdate := db.Save(&updatedAdress)
-
-	if resUpdate.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", resUpdate.Error.Error())})
-		return
+	// Create an Address model from the updated request data
+	address := models.Address{
+		ID: uri.ID,
+		CustomerID: addressReq.CustomerID,
+		Type: addressReq.Type,
+		Address: addressReq.Address,
+		Pobox: addressReq.Pobox,
+		PostalCode: addressReq.PostalCode,
+		City: addressReq.City,
+		Province: addressReq.Province,
+		Country: addressReq.Country,
+		AttentionPerson: addressReq.AttentionPerson,
 	}
 
-	ctx.JSON(http.StatusOK, updatedAdress)
+	updatedAddress, err := addressDAO.Update(&address)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", err.Error())})
+		return
+	}
+	
+	ctx.JSON(http.StatusOK, updatedAddress)
 }
 
 func DeleteAddress(ctx *gin.Context) {
 	var uri URI
-	var address Address
 
 	if err := ctx.ShouldBindUri(&uri); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	id := uri.ID
+	address, err := addressDAO.GetById(uri.ID)
 
-	res := db.First(&address, id)
-	if res.Error != nil {
+	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Address with id: %v doesn't exist", uri.ID)})
 		return
-	}
+	}	
 	
 	// To delete a "legal" branch you must first set customer to inactive.
 	if address.Type == "legal" {
@@ -169,9 +209,9 @@ func DeleteAddress(ctx *gin.Context) {
 		return
 	}
 	
-	resDelete := db.Delete(&address)
-	if res.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", resDelete.Error.Error())})
+	addressDAO.Delete(uri.ID)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", err.Error())})
 		return
 	}
 	
