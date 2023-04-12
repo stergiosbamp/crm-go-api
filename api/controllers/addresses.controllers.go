@@ -126,8 +126,6 @@ func CreateAddress(ctx *gin.Context) {
 		return
 	}
 
-	// You can also later define a new struct for response data (e.g. AddressResponse) 
-	// in order to omit the empty Customer field which is created from the model in the create operation.
 	ctx.JSON(http.StatusCreated, addressCreated)
 }
 
