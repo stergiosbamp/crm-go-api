@@ -30,7 +30,7 @@ type ContactRequest struct {
 	Mobile      string `json:"mobile" binding:"required,e164"`
 	Notes       string `json:"notes" binding:"required"`
 	CustomerID  uint   `json:"customerId" binding:"required,numeric"`
-	AddressID   *uint  `json:"addressId" binding:"numeric"`
+	AddressID   *uint  `json:"addressId" binding:"omitempty,numeric"`
 }
 
 type ContactResponse struct {
@@ -92,19 +92,21 @@ func CreateContact(ctx *gin.Context) {
 		return
 	}
 
-	// Shouldn't assign an address id to one that refers to a contact
 	addressId := contactReq.AddressID
-	address, err := addressDAO.GetById(*addressId)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Address with id: %v doesn't exist", *addressId)})
-		return
+	// Address is optional for contacts
+	if addressId != nil {
+		// Shouldn't assign an address id to one that refers to a contact
+		address, err := addressDAO.GetById(*addressId)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Address with id: %v doesn't exist", *addressId)})
+			return
+		}	
+		if address.Type != "contact" {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Address with id: %v refers to a customer's address and not to a contact", *addressId)})
+			return
+		}
 	}
-
-	if address.Type != "contact" {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Address with id: %v refers to a customer's address and not to a contact", *addressId)})
-		return
-	}
-
+	
 	// Create a Model from request data
 	contact := models.Contact{
 		ContactType: contactReq.ContactType,
@@ -131,8 +133,8 @@ func CreateContact(ctx *gin.Context) {
 		return
 	}
 
-	contactRes := ContactResponse {
-		ID: 		 contactCreated.ID,
+	contactRes := ContactResponse{
+		ID:          contactCreated.ID,
 		ContactType: contactCreated.ContactType,
 		FirstName:   contactCreated.FirstName,
 		LastName:    contactCreated.LastName,
@@ -173,9 +175,9 @@ func UpdateContact(ctx *gin.Context) {
 	_, err := contactDAO.GetById(uri.ID)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Contact with id: %v doesn't exist", uri.ID)})
-		return		
+		return
 	}
-	
+
 	// Shouldn't assign an address id to one that refers to a contact
 	addressId := contactReq.AddressID
 	address, err := addressDAO.GetById(*addressId)
@@ -216,8 +218,8 @@ func UpdateContact(ctx *gin.Context) {
 		return
 	}
 
-	contactRes := ContactResponse {
-		ID: 		 contactUpdated.ID,
+	contactRes := ContactResponse{
+		ID:          contactUpdated.ID,
 		ContactType: contactUpdated.ContactType,
 		FirstName:   contactUpdated.FirstName,
 		LastName:    contactUpdated.LastName,
