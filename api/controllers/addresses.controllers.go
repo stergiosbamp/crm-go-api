@@ -24,6 +24,19 @@ type AddressRequest struct {
 	AttentionPerson *string `json:"attentionPerson"`
 }
 
+type AddressResponse struct {
+	ID              uint    `json:"id"`
+	CustomerID      *uint   `json:"customerId,omitempty"`
+	Type            string  `json:"type"`
+	Address         string  `json:"address"`
+	Pobox           string  `json:"pobox"`
+	PostalCode      string  `json:"postalCode"`
+	City            string  `json:"city"`
+	Province        string  `json:"province"`
+	Country         string  `json:"country"`
+	AttentionPerson *string `json:"attentionPerson,omitempty"`
+}
+
 func GetAddress(ctx *gin.Context) {
 	var uri URI
 
@@ -126,7 +139,21 @@ func CreateAddress(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, addressCreated)
+	// Can use a universal response due to 'omitempty' tags
+	addressRes := AddressResponse {
+		ID: addressCreated.ID,
+		CustomerID: addressReq.CustomerID,
+		Type: addressCreated.Type,
+		Address: addressCreated.Address,
+		Pobox: addressCreated.Pobox,
+		PostalCode: addressCreated.PostalCode,
+		City: addressCreated.City,
+		Province: addressCreated.Province,
+		Country: addressCreated.Country,
+		AttentionPerson: addressCreated.AttentionPerson,
+	}
+	
+	ctx.JSON(http.StatusCreated, addressRes)
 }
 
 // Update operation is easy to break the integrity of type of addresses
@@ -183,7 +210,20 @@ func UpdateAddress(ctx *gin.Context) {
 		return
 	}
 	
-	ctx.JSON(http.StatusOK, updatedAddress)
+	addressRes := AddressResponse {
+		ID: updatedAddress.ID,
+		CustomerID: addressReq.CustomerID,
+		Type: updatedAddress.Type,
+		Address: updatedAddress.Address,
+		Pobox: updatedAddress.Pobox,
+		PostalCode: updatedAddress.PostalCode,
+		City: updatedAddress.City,
+		Province: updatedAddress.Province,
+		Country: updatedAddress.Country,
+		AttentionPerson: updatedAddress.AttentionPerson,
+	}
+
+	ctx.JSON(http.StatusOK, addressRes)
 }
 
 func DeleteAddress(ctx *gin.Context) {
