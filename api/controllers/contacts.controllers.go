@@ -33,6 +33,27 @@ type ContactRequest struct {
 	AddressID   *uint  `json:"addressId" binding:"numeric"`
 }
 
+type ContactResponse struct {
+	ID          uint   `json:"id"`
+	ContactType string `json:"contactType"`
+	FirstName   string `json:"firstName"`
+	LastName    string `json:"lastName"`
+	NickName    string `json:"nickName"`
+	Gender      string `json:"gender"`
+	Birthday    string `json:"birthday"`
+	Language    string `json:"language"`
+	JobTitle    string `json:"jobTitle"`
+	Email       string `json:"email"`
+	Skype       string `json:"skype"`
+	PhoneDirect string `json:"phoneDirect"`
+	PhoneOffice string `json:"phoneOffice"`
+	Mobile      string `json:"mobile"`
+	Notes       string `json:"notes"`
+	CustomerID  uint   `json:"customerId"`
+	AddressID   *uint  `json:"addressId,omitempty"`
+}
+
+
 func GetContact(ctx *gin.Context) {
 	var uri URI
 
@@ -80,7 +101,7 @@ func CreateContact(ctx *gin.Context) {
 	}
 
 	if address.Type != "contact" {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Address with id: %v refers to a customer's address and not to a contact", addressId)})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Address with id: %v refers to a customer's address and not to a contact", *addressId)})
 		return
 	}
 
@@ -110,7 +131,27 @@ func CreateContact(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, contactCreated)
+	contactRes := ContactResponse {
+		ID: 		 contactCreated.ID,
+		ContactType: contactCreated.ContactType,
+		FirstName:   contactCreated.FirstName,
+		LastName:    contactCreated.LastName,
+		NickName:    contactCreated.NickName,
+		Gender:      contactCreated.Gender,
+		Birthday:    contactCreated.Birthday,
+		Language:    contactCreated.Language,
+		JobTitle:    contactCreated.JobTitle,
+		Email:       contactCreated.Email,
+		Skype:       contactCreated.Skype,
+		PhoneDirect: contactCreated.PhoneDirect,
+		PhoneOffice: contactCreated.PhoneOffice,
+		Mobile:      contactCreated.Mobile,
+		Notes:       contactCreated.Notes,
+		CustomerID:  contactCreated.CustomerID,
+		AddressID:   contactCreated.AddressID,
+	}
+
+	ctx.JSON(http.StatusCreated, contactRes)
 }
 
 func UpdateContact(ctx *gin.Context) {
@@ -175,7 +216,27 @@ func UpdateContact(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, contactUpdated)
+	contactRes := ContactResponse {
+		ID: 		 contactUpdated.ID,
+		ContactType: contactUpdated.ContactType,
+		FirstName:   contactUpdated.FirstName,
+		LastName:    contactUpdated.LastName,
+		NickName:    contactUpdated.NickName,
+		Gender:      contactUpdated.Gender,
+		Birthday:    contactUpdated.Birthday,
+		Language:    contactUpdated.Language,
+		JobTitle:    contactUpdated.JobTitle,
+		Email:       contactUpdated.Email,
+		Skype:       contactUpdated.Skype,
+		PhoneDirect: contactUpdated.PhoneDirect,
+		PhoneOffice: contactUpdated.PhoneOffice,
+		Mobile:      contactUpdated.Mobile,
+		Notes:       contactUpdated.Notes,
+		CustomerID:  contactUpdated.CustomerID,
+		AddressID:   contactUpdated.AddressID,
+	}
+
+	ctx.JSON(http.StatusOK, contactRes)
 }
 
 func DeleteContact(ctx *gin.Context) {
