@@ -11,7 +11,7 @@ func RegisterCustomersRoutes(rg *gin.RouterGroup) {
 	rg.GET("/customers", controllers.GetCustomers)
 	rg.GET("/customers/:id", controllers.GetCustomer)
 	rg.POST("/customers", controllers.CreateCustomer)
-	rg.PUT("/customers/:id", controllers.UpdateOrCreateCustomer)
+	rg.PUT("/customers/:id", controllers.UpdateCustomer)
 	rg.PATCH("/customers/:id", controllers.PatchCustomer)
 	rg.DELETE("/customers/:id", controllers.DeleteCustomer)
 	// TODO: IMPORT

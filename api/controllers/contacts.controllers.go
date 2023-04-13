@@ -3,46 +3,69 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+
 	// "time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/stergiosbamp/go-api/dao"
+	"github.com/stergiosbamp/go-api/models"
 )
 
-type Contact struct {
-	ID                 	uint  	 `json:"id" binding:"numeric"`
-	ContactType 		string 	 `json:"contactType" binding:"required"`
-	FirstName   		string   `json:"firstName" binding:"required,max=50"`
-	LastName    		string   `json:"lastName" binding:"required,max=50"`
-	NickName    		string   `json:"nickName" binding:"required,max=50"`
-	Gender      		string   `json:"gender" binding:"required"`
-	Birthday    		string	 `json:"birthday" binding:"required" time_format:"2006-01-02"`
-	Language    		string   `json:"language" binding:"required,bcp47_language_tag"`
-	JobTitle    		string   `json:"jobTitle" binding:"required"`
-	Email       		string   `json:"email" binding:"required,email"`
-	Skype       		string   `json:"skype" binding:"required,max=25"`
-	PhoneDirect 		string   `json:"phoneDirect" binding:"required,numeric"`
-	PhoneOffice 		string   `json:"phoneOffice" binding:"required,numeric"`
-	Mobile      		string   `json:"mobile" binding:"required,e164"`
-	Notes       		string   `json:"notes" binding:"required"`
-	CustomerID  		uint     `json:"customerId" binding:"required,numeric"`
-	//Customer 			Customer 
-	AddressID   		uint     `json:"addressId" binding:"required,numeric"`
-	//Address 			Address 
+var contactDAO = dao.NewContactDAO()
+
+type ContactRequest struct {
+	ID          uint   `json:"id" binding:"numeric"`
+	ContactType string `json:"contactType" binding:"required"`
+	FirstName   string `json:"firstName" binding:"required,max=50"`
+	LastName    string `json:"lastName" binding:"required,max=50"`
+	NickName    string `json:"nickName" binding:"required,max=50"`
+	Gender      string `json:"gender" binding:"required"`
+	Birthday    string `json:"birthday" binding:"required" time_format:"2006-01-02"`
+	Language    string `json:"language" binding:"required,bcp47_language_tag"`
+	JobTitle    string `json:"jobTitle" binding:"required"`
+	Email       string `json:"email" binding:"required,email"`
+	Skype       string `json:"skype" binding:"required,max=25"`
+	PhoneDirect string `json:"phoneDirect" binding:"required,numeric"`
+	PhoneOffice string `json:"phoneOffice" binding:"required,numeric"`
+	Mobile      string `json:"mobile" binding:"required,e164"`
+	Notes       string `json:"notes" binding:"required"`
+	CustomerID  uint   `json:"customerId" binding:"required,numeric"`
+	AddressID   *uint  `json:"addressId" binding:"omitempty,numeric"`
 }
+
+type ContactResponse struct {
+	ID          uint   `json:"id"`
+	ContactType string `json:"contactType"`
+	FirstName   string `json:"firstName"`
+	LastName    string `json:"lastName"`
+	NickName    string `json:"nickName"`
+	Gender      string `json:"gender"`
+	Birthday    string `json:"birthday"`
+	Language    string `json:"language"`
+	JobTitle    string `json:"jobTitle"`
+	Email       string `json:"email"`
+	Skype       string `json:"skype"`
+	PhoneDirect string `json:"phoneDirect"`
+	PhoneOffice string `json:"phoneOffice"`
+	Mobile      string `json:"mobile"`
+	Notes       string `json:"notes"`
+	CustomerID  uint   `json:"customerId"`
+	AddressID   *uint  `json:"addressId,omitempty"`
+}
+
 
 func GetContact(ctx *gin.Context) {
 	var uri URI
-	var contact Contact
 
 	if err := ctx.ShouldBindUri(&uri); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
 	id := uri.ID
-	
-	res := db.Where("id = ?", id).First(&contact)
-	
-	if res.Error != nil {
+	contact, err := contactDAO.GetById(id)
+
+	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Contact with ID %v not found.", id)})
 		return
 	}
@@ -51,12 +74,10 @@ func GetContact(ctx *gin.Context) {
 }
 
 func GetContacts(ctx *gin.Context) {
-	var contacts []Contact
-	
-	res := db.Find(&contacts)
-	
-	if res.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", res.Error)})
+	contacts, err := contactDAO.GetList()
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", err.Error())})
 		return
 	}
 
@@ -64,68 +85,175 @@ func GetContacts(ctx *gin.Context) {
 }
 
 func CreateContact(ctx *gin.Context) {
-	var contact Contact
+	var contactReq ContactRequest
 
-	if err := ctx.ShouldBindJSON(&contact); err != nil {
+	if err := ctx.ShouldBindJSON(&contactReq); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	
-	res := db.Create(&contact)
 
-	if res.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", res.Error)})
+	addressId := contactReq.AddressID
+	// Address is optional for contacts
+	if addressId != nil {
+		// Shouldn't assign an address id to one that refers to a contact
+		address, err := addressDAO.GetById(*addressId)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Address with id: %v doesn't exist", *addressId)})
+			return
+		}	
+		if address.Type != "contact" {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Address with id: %v refers to a customer's address and not to a contact", *addressId)})
+			return
+		}
+	}
+	
+	// Create a Model from request data
+	contact := models.Contact{
+		ContactType: contactReq.ContactType,
+		FirstName:   contactReq.FirstName,
+		LastName:    contactReq.LastName,
+		NickName:    contactReq.NickName,
+		Gender:      contactReq.Gender,
+		Birthday:    contactReq.Birthday,
+		Language:    contactReq.Language,
+		JobTitle:    contactReq.JobTitle,
+		Email:       contactReq.Email,
+		Skype:       contactReq.Skype,
+		PhoneDirect: contactReq.PhoneDirect,
+		PhoneOffice: contactReq.PhoneOffice,
+		Mobile:      contactReq.Mobile,
+		Notes:       contactReq.Notes,
+		CustomerID:  contactReq.CustomerID,
+		AddressID:   contactReq.AddressID,
+	}
+
+	contactCreated, err := contactDAO.Create(&contact)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", err.Error())})
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, contact)
+	contactRes := ContactResponse{
+		ID:          contactCreated.ID,
+		ContactType: contactCreated.ContactType,
+		FirstName:   contactCreated.FirstName,
+		LastName:    contactCreated.LastName,
+		NickName:    contactCreated.NickName,
+		Gender:      contactCreated.Gender,
+		Birthday:    contactCreated.Birthday,
+		Language:    contactCreated.Language,
+		JobTitle:    contactCreated.JobTitle,
+		Email:       contactCreated.Email,
+		Skype:       contactCreated.Skype,
+		PhoneDirect: contactCreated.PhoneDirect,
+		PhoneOffice: contactCreated.PhoneOffice,
+		Mobile:      contactCreated.Mobile,
+		Notes:       contactCreated.Notes,
+		CustomerID:  contactCreated.CustomerID,
+		AddressID:   contactCreated.AddressID,
+	}
+
+	ctx.JSON(http.StatusCreated, contactRes)
 }
 
-func UpdateOrCreateContact(ctx *gin.Context) {
+func UpdateContact(ctx *gin.Context) {
 	var uri URI
-	var updatedContact Contact
 
 	if err := ctx.ShouldBindUri(&uri); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	
-	if err := ctx.ShouldBindJSON(&updatedContact); err != nil {
+
+	var contactReq ContactRequest
+
+	if err := ctx.ShouldBindJSON(&contactReq); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Assign the ID for Update or Create
-	updatedContact.ID = uri.ID
-
-	res := db.Save(&updatedContact)
-	
-	if res.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", res.Error)})
+	// Check if contact to update exists
+	_, err := contactDAO.GetById(uri.ID)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Contact with id: %v doesn't exist", uri.ID)})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, updatedContact)
+	// Shouldn't assign an address id to one that refers to a contact
+	addressId := contactReq.AddressID
+	address, err := addressDAO.GetById(*addressId)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Address with id: %v doesn't exist", *addressId)})
+		return
+	}
+
+	if address.Type != "contact" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Address with id: %v refers to a customer's address and not to a contact", *addressId)})
+		return
+	}
+
+	// Create a Model from request data
+	contact := models.Contact{
+		ID:          uri.ID,
+		ContactType: contactReq.ContactType,
+		FirstName:   contactReq.FirstName,
+		LastName:    contactReq.LastName,
+		NickName:    contactReq.NickName,
+		Gender:      contactReq.Gender,
+		Birthday:    contactReq.Birthday,
+		Language:    contactReq.Language,
+		JobTitle:    contactReq.JobTitle,
+		Email:       contactReq.Email,
+		Skype:       contactReq.Skype,
+		PhoneDirect: contactReq.PhoneDirect,
+		PhoneOffice: contactReq.PhoneOffice,
+		Mobile:      contactReq.Mobile,
+		Notes:       contactReq.Notes,
+		CustomerID:  contactReq.CustomerID,
+		AddressID:   contactReq.AddressID,
+	}
+
+	contactUpdated, err := contactDAO.Update(&contact)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", err.Error())})
+		return
+	}
+
+	contactRes := ContactResponse{
+		ID:          contactUpdated.ID,
+		ContactType: contactUpdated.ContactType,
+		FirstName:   contactUpdated.FirstName,
+		LastName:    contactUpdated.LastName,
+		NickName:    contactUpdated.NickName,
+		Gender:      contactUpdated.Gender,
+		Birthday:    contactUpdated.Birthday,
+		Language:    contactUpdated.Language,
+		JobTitle:    contactUpdated.JobTitle,
+		Email:       contactUpdated.Email,
+		Skype:       contactUpdated.Skype,
+		PhoneDirect: contactUpdated.PhoneDirect,
+		PhoneOffice: contactUpdated.PhoneOffice,
+		Mobile:      contactUpdated.Mobile,
+		Notes:       contactUpdated.Notes,
+		CustomerID:  contactUpdated.CustomerID,
+		AddressID:   contactUpdated.AddressID,
+	}
+
+	ctx.JSON(http.StatusOK, contactRes)
 }
 
 func DeleteContact(ctx *gin.Context) {
 	var uri URI
-	var contact Contact
 
 	if err := ctx.ShouldBindUri(&uri); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	id := uri.ID
-	
-	res := db.Where("id = ?", id).Unscoped().Delete(&contact)
-
-	// ADD LOGIC WHEN DELETING A 'LEGAL' BRANCH TO CHANGE (OR NOT) THE CUSTOMER 'active' STATUS.
-	if res.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", res.Error)})
+	errDeleted := contactDAO.Delete(uri.ID)
+	if errDeleted != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", errDeleted.Error())})
 		return
 	}
 
-	ctx.JSON(http.StatusNoContent, contact)
+	ctx.JSON(http.StatusNoContent, gin.H{"": ""})
 }

@@ -4,6 +4,9 @@
 # Environment variables
 .env
 
+# Debug files
+api/debug/*
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
