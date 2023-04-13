@@ -27,6 +27,26 @@ type CustomerRequest struct {
 	Fax                string	 `json:"fax" binding:"required"`
 }
 
+// Different struct for response instead of embedding json tags into the model and return model.
+// 1. separation of concerns
+// 2. easily populate model fields (e.g. Customer) without requiring to be pointer which is hard to retrieve embedded data.
+// 3. future-proofing to involve API independently without affecting underlying model
+type CustomerResponse struct {
+	ID                 uint  	 `json:"id"`
+	Active             bool   	 `json:"active"`
+	Name               string 	 `json:"name"`
+	ShortName          string	 `json:"shortName"`
+	VatNumber          string	 `json:"vatNumber"`
+	VatApply           bool	 	 `json:"vatApply"`
+	RegistrationNumber string	 `json:"registrationNumber"`
+	DunsNumber         string	 `json:"dunsNumber"`
+	TaxExempt          bool   	 `json:"taxExempt"`
+	Language           string	 `json:"language"`
+	Email              string	 `json:"email"`
+	Phone              string	 `json:"phone"`
+	Fax                string	 `json:"fax"`
+}
+
 type URI struct {
 	ID  uint `uri:"id" binding:"required"`
 }
@@ -67,6 +87,7 @@ func GetCustomers(ctx *gin.Context) {
 
 func CreateCustomer(ctx *gin.Context) {
 	var customerReq CustomerRequest
+	var customerRes CustomerResponse
 
 	if err := ctx.ShouldBindJSON(&customerReq); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -96,7 +117,24 @@ func CreateCustomer(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, customerCreated)
+	// Map model to response struct
+	customerRes = CustomerResponse{
+		ID: customerCreated.ID,
+		Active: customerCreated.Active,
+		Name:customerCreated.Name,
+		ShortName: customerCreated.ShortName,
+		VatNumber: customerCreated.VatNumber,
+		VatApply: customerCreated.VatApply,
+		RegistrationNumber: customerCreated.RegistrationNumber,
+		DunsNumber: customerCreated.DunsNumber,
+		TaxExempt: customerCreated.TaxExempt,
+		Language: customerCreated.Language,
+		Email: customerCreated.Email,
+		Phone: customerCreated.Phone,
+		Fax: customerCreated.Fax,
+	}
+
+	ctx.JSON(http.StatusCreated, customerRes)
 }
 
 func UpdateCustomer(ctx *gin.Context) {
@@ -147,7 +185,23 @@ func UpdateCustomer(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, customerUpdated)
+	customerRes := CustomerResponse{
+		ID: customerUpdated.ID,
+		Active: customerUpdated.Active,
+		Name:customerUpdated.Name,
+		ShortName: customerUpdated.ShortName,
+		VatNumber: customerUpdated.VatNumber,
+		VatApply: customerUpdated.VatApply,
+		RegistrationNumber: customerUpdated.RegistrationNumber,
+		DunsNumber: customerUpdated.DunsNumber,
+		TaxExempt: customerUpdated.TaxExempt,
+		Language: customerUpdated.Language,
+		Email: customerUpdated.Email,
+		Phone: customerUpdated.Phone,
+		Fax: customerUpdated.Fax,
+	}
+
+	ctx.JSON(http.StatusOK, customerRes)
 }
 
 func PatchCustomer(ctx *gin.Context) {
@@ -174,7 +228,7 @@ func PatchCustomer(ctx *gin.Context) {
 
 	// ADD BUSINESS LOGIC THAT CANNOT ACTIVATE A CUSTOMER WITHOUT HAVING IN DB A LEGAL ADDRESS.
 	
-	customerPatched := models.Customer{
+	customer := models.Customer{
 		ID: uri.ID, // inject ID
 		Active: *patchBody.Active, // update status
 		Name: oldCustomer.Name,
@@ -190,14 +244,30 @@ func PatchCustomer(ctx *gin.Context) {
 		Fax: oldCustomer.Fax,
 	}
 	
-	newCustomer, err := customerDAO.Update(&customerPatched)
+	customerPatched, err := customerDAO.Update(&customer)
 	
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", err.Error())})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, newCustomer)
+	customerRes := CustomerResponse{
+		ID: customerPatched.ID,
+		Active: customerPatched.Active,
+		Name:customerPatched.Name,
+		ShortName: customerPatched.ShortName,
+		VatNumber: customerPatched.VatNumber,
+		VatApply: customerPatched.VatApply,
+		RegistrationNumber: customerPatched.RegistrationNumber,
+		DunsNumber: customerPatched.DunsNumber,
+		TaxExempt: customerPatched.TaxExempt,
+		Language: customerPatched.Language,
+		Email: customerPatched.Email,
+		Phone: customerPatched.Phone,
+		Fax: customerPatched.Fax,
+	}
+
+	ctx.JSON(http.StatusOK, customerRes)
 }
 
 func DeleteCustomer(ctx *gin.Context) {
