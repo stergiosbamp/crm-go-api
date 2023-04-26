@@ -1,1 +1,1 @@
-# This is a Go API for Horisen
+# A pluggable, simple and fast API for your CRM.
