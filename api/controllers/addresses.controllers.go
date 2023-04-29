@@ -53,7 +53,20 @@ func GetAddress(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, address)
+	addressResponse := AddressResponse {
+		ID: address.ID,
+		CustomerID: address.CustomerID,
+		Type: address.Type,
+		Address: address.Address,
+		Pobox: address.Pobox,
+		PostalCode: address.PostalCode,
+		City: address.City,
+		Province: address.Province,
+		Country: address.Country,
+		AttentionPerson: address.AttentionPerson,
+	}
+
+	ctx.JSON(http.StatusOK, addressResponse)
 }
 
 func GetAddresses(ctx *gin.Context) {
@@ -64,7 +77,26 @@ func GetAddresses(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, addresses)
+	// Create the response payload from the model
+	var addressesResponse []AddressResponse
+
+	for _, address := range addresses {
+		address := AddressResponse {
+			ID: address.ID,
+			CustomerID: address.CustomerID,
+			Type: address.Type,
+			Address: address.Address,
+			Pobox: address.Pobox,
+			PostalCode: address.PostalCode,
+			City: address.City,
+			Province: address.Province,
+			Country: address.Country,
+			AttentionPerson: address.AttentionPerson,
+		}
+		addressesResponse = append(addressesResponse, address)
+	}
+	
+	ctx.JSON(http.StatusOK, addressesResponse)
 }
 
 func CreateAddress(ctx *gin.Context) {
