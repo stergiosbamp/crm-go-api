@@ -28,7 +28,6 @@ To run the up we simply use the power of Docker and Docker Compose v2.
 
 To spin up the app for production use:
 
-# {TODO this runs by default the override file which is for dev mode}
 ```bash
 $ cd docker/
 $ docker compose build
@@ -61,3 +60,24 @@ $ cd docker/
 $ docker compose -f docker-compose.yml -f docker-compose.dev.yml build
 $ docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 ```
+
+## API
+
+### Usage
+This API provides a simple and easy-to-use management of customers. 
+The usage of API is described in detail in the [API documentation](swagger/openapi.yaml) following the OpenAPI Specification 3.0.
+
+### Info
+The API currently supports the management of:
+
+1. Customers
+2. Contacts (of Customers)
+3. Addresses (of Customers or Contacts)
+
+However, this API implements the following business logic for the above entities, as every CRM is supposed to:
+
+* A Customer can have multiple Contacts and Addresses
+* Only 3 types of Addresses are supported: "legal" or "branch" for Customers or "contact" for Contacts.
+* A Customer can have only one "legal" Address. Only then it is considered as active.
+* A Customer can have multiple "branch" Addresses.
+* A Contact may or may not have an Address.
