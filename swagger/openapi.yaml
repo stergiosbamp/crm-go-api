@@ -8,7 +8,6 @@ info:
 
 servers:
   - url: http://localhost:8080/v1
-    description: A localy developed API, e.g. Development (local) server
 
 tags:
   - name: Customers
