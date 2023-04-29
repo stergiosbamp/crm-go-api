@@ -31,6 +31,8 @@ services:
       - ../api/.env
     networks:
       - backend
+    depends_on:
+      - db
 
 volumes:
   mysql-db:
