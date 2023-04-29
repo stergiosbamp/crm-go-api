@@ -70,7 +70,28 @@ func GetContact(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, contact)
+	// Create a ContactResponse from the contact model
+	contactRes := ContactResponse{
+		ID:          contact.ID,
+		ContactType: contact.ContactType,
+		FirstName:   contact.FirstName,
+		LastName:    contact.LastName,
+		NickName:    contact.NickName,
+		Gender: contact.Gender,
+		Birthday: contact.Birthday,
+		Language: contact.Language,
+		JobTitle: contact.JobTitle,
+		Email: contact.Email,
+		Skype: contact.Skype,
+		PhoneDirect: contact.PhoneDirect,
+		PhoneOffice: contact.PhoneOffice,
+		Mobile: contact.Mobile,
+		Notes: contact.Notes,
+		CustomerID: contact.CustomerID,
+		AddressID: contact.AddressID,
+	}
+
+	ctx.JSON(http.StatusOK, contactRes)
 }
 
 func GetContacts(ctx *gin.Context) {
@@ -81,7 +102,32 @@ func GetContacts(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, contacts)
+	var contactsRes []ContactResponse
+
+	for _, contact := range contacts {
+		contact := ContactResponse{
+			ID:          contact.ID,
+			ContactType: contact.ContactType,
+			FirstName:   contact.FirstName,
+			LastName:    contact.LastName,
+			NickName:    contact.NickName,
+			Gender: contact.Gender,
+			Birthday: contact.Birthday,
+			Language: contact.Language,
+			JobTitle: contact.JobTitle,
+			Email: contact.Email,
+			Skype: contact.Skype,
+			PhoneDirect: contact.PhoneDirect,
+			PhoneOffice: contact.PhoneOffice,
+			Mobile: contact.Mobile,
+			Notes: contact.Notes,
+			CustomerID: contact.CustomerID,
+			AddressID: contact.AddressID,
+		}
+		contactsRes = append(contactsRes, contact)
+	}
+	
+	ctx.JSON(http.StatusOK, contactsRes)
 }
 
 func CreateContact(ctx *gin.Context) {
