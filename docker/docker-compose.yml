@@ -34,6 +34,17 @@ services:
     depends_on:
       - db
 
+  swagger:
+    image: swaggerapi/swagger-ui
+    container_name: swagger-ui
+    ports:
+      - 8512:8080
+    volumes:
+      - ../swagger/:/swagger/
+    environment:
+      SWAGGER_JSON: /swagger/openapi.yaml  # relative to container's directory (i.e. /swagger/)
+      BASE_URL: /swagger  # access at http://localhost:8512/swagger/
+
 volumes:
   mysql-db:
 
