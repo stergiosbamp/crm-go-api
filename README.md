@@ -63,9 +63,16 @@ $ docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 
 ## API
 
-### Usage
 This API provides a simple and easy-to-use management of customers. 
+
+### Usage
 The usage of API is described in detail in the [API documentation](swagger/openapi.yaml) following the OpenAPI Specification 3.0.
+
+For this purpose, you can explore the API and its' capabilities at:
+
+`http://localhost:8512/swagger/`
+
+where an instance of the Swagger UI application is provided through Docker. The Swagger UI provides a user-friendly interface for exploring and interacting with your API, allowing you to easily test API requests and responses, view documentation, and more.
 
 ### Info
 The API currently supports the management of:
