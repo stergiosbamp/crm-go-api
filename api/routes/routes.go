@@ -15,6 +15,7 @@ func InitRoutes() {
 	RegisterCustomersRoutes(v1)
 	RegisterAddressesRoutes(v1)
 	RegisterContactsRoutes(v1)
+	RegisterUserRoutes(v1)
 
 	route.Run()
 }
