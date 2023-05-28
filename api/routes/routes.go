@@ -1,6 +1,9 @@
 package routes
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/stergiosbamp/go-api/middleware"
+)
 
 func InitRoutes() {
 	route := gin.Default()
@@ -12,10 +15,15 @@ func InitRoutes() {
 
 	v1 := route.Group("v1")
 
+
+	RegisterUserRoutes(v1)
+
+	// all endpoints below require authentication
+	v1.Use(middleware.JwtAuth())
+	
 	RegisterCustomersRoutes(v1)
 	RegisterAddressesRoutes(v1)
 	RegisterContactsRoutes(v1)
-	RegisterUserRoutes(v1)
 
 	route.Run()
 }
