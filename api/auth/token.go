@@ -1,6 +1,9 @@
 package auth
 
 import (
+	"errors"
+	"net/http"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -10,21 +13,20 @@ import (
 
 const TOKEN_EXP_MINS = 15
 
-type TokenProvider struct {
-	conf config.Config
+type AuthProvider struct {
+	conf  config.Config
 	Token string
 }
 
-func (tokenProvider *TokenProvider) GenerateToken(username string) (string, error) {
-	secretKey := tokenProvider.conf.GetSecretKey()
+func (authProvider *AuthProvider) GenerateToken(username string) (string, error) {
+	secretKey := authProvider.conf.GetSecretKey()
 
 	token := jwt.New(jwt.SigningMethodHS256)
-	
+
 	claims := token.Claims.(jwt.MapClaims)
 	claims["exp"] = time.Now().Add(time.Minute * TOKEN_EXP_MINS).Unix()
 	claims["iat"] = time.Now().Unix()
 	claims["user"] = username
-
 
 	// sign token
 	tokenString, err := token.SignedString([]byte(secretKey))
@@ -32,7 +34,41 @@ func (tokenProvider *TokenProvider) GenerateToken(username string) (string, erro
 		return "", err
 	}
 
-	tokenProvider.Token = tokenString
+	authProvider.Token = tokenString
 
-	return tokenProvider.Token, nil
+	return authProvider.Token, nil
+}
+
+func (authProvider *AuthProvider) Authenticate() (bool, error) {
+	secretKey := authProvider.conf.GetSecretKey()
+
+	tokenString := authProvider.Token
+
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return []byte(secretKey), nil
+	})
+
+	if err != nil {
+		return false, err
+	}
+
+	_, ok := token.Claims.(jwt.MapClaims)
+	if ok && token.Valid {
+		return true, nil
+	} else {
+		return false, errors.New("invalid token")
+	}
+}
+
+func (authProvider *AuthProvider) ExtractToken(request *http.Request) (string, error) {
+	authString := request.Header.Get("Authorization")
+
+	authParts := strings.Split(authString, " ")
+	if len(authParts) < 2 {
+		return "", errors.New("missing bearer token")
+	}
+
+	token := authParts[1]
+
+	return token, nil
 }

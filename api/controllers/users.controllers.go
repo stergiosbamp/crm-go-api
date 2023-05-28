@@ -33,7 +33,6 @@ type UserLoginResponse struct {
 	Token   string `json:"token"`
 }
 
-
 func Register(ctx *gin.Context) {
 	var userRegisterRequest UserRegisterRequest
 
@@ -67,7 +66,7 @@ func Register(ctx *gin.Context) {
 }
 
 func Login(ctx *gin.Context) {
-	var token auth.TokenProvider
+	var token auth.AuthProvider
 
 	var userLoginRequest UserLoginRequest
 
@@ -106,4 +105,5 @@ func Login(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, response)
+
 }
