@@ -6,7 +6,10 @@ import (
 )
 
 func RegisterUserRoutes(rg *gin.RouterGroup) {
-	rg.POST("/register", controllers.Register)
-	rg.POST("/login", controllers.Login)
+	// group for only auth routes
+	authGroup := rg.Group("/auth")
+	
+	authGroup.POST("/register", controllers.Register)
+	authGroup.POST("/login", controllers.Login)
 	// rg.POST("/logout", controllers.CreateAddress)
 }

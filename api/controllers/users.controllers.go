@@ -4,9 +4,11 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
+
+	"github.com/stergiosbamp/go-api/auth"
 	"github.com/stergiosbamp/go-api/dao"
 	"github.com/stergiosbamp/go-api/models"
-	"golang.org/x/crypto/bcrypt"
 )
 
 var userDAO = dao.NewUserDAO()
@@ -27,7 +29,8 @@ type UserLoginRequest struct {
 }
 
 type UserLoginResponse struct {
-	Token string `json:"token"`
+	Message string `json:"message"`
+	Token   string `json:"token"`
 }
 
 
@@ -64,6 +67,8 @@ func Register(ctx *gin.Context) {
 }
 
 func Login(ctx *gin.Context) {
+	var token auth.TokenProvider
+
 	var userLoginRequest UserLoginRequest
 
 	if err := ctx.ShouldBindJSON(&userLoginRequest); err != nil {
@@ -73,15 +78,32 @@ func Login(ctx *gin.Context) {
 
 	user, err := userDAO.FindByUsername(userLoginRequest.Username)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "User does not exist"})
+		response := UserLoginResponse{
+			Message: "User does not exist",
+		}
+		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userLoginRequest.Password))
 	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+		response := UserLoginResponse{
+			Message: "Invalid credentials",
+		}
+		ctx.JSON(http.StatusUnauthorized, response)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"message": "Login successful"})
+	tokenString, err := token.GenerateToken(user.Username)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	response := UserLoginResponse{
+		Message: "Login successful",
+		Token:   tokenString,
+	}
+
+	ctx.JSON(http.StatusOK, response)
 }

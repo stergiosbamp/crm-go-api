@@ -14,6 +14,8 @@ type Config struct {
 	DbHost string
 	DbPort string
 	DbName string
+
+	SecretKey string
 }
 
 func (config *Config) CreateDSN() string {
@@ -42,4 +44,16 @@ func (config *Config) CreateDSN() string {
 						config.DbUser, config.DbPass, config.DbHost, config.DbPort, config.DbName)
 
 	return dsn
+}
+
+func (config *Config) GetSecretKey() string {
+	err := godotenv.Load()
+
+	if err != nil {
+		log.Fatal("Failed to load .env")
+	}
+
+	config.SecretKey = os.Getenv("SECRET_KEY")
+
+	return config.SecretKey
 }
