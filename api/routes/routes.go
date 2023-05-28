@@ -2,8 +2,11 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/stergiosbamp/go-api/config"
 	"github.com/stergiosbamp/go-api/middleware"
 )
+
+var conf config.Config
 
 func InitRoutes() {
 	route := gin.Default()
@@ -18,8 +21,10 @@ func InitRoutes() {
 
 	RegisterUserRoutes(v1)
 
-	// all endpoints below require authentication
-	v1.Use(middleware.JwtAuth())
+	if conf.UseAuth() {
+		// all endpoints below require authentication
+		v1.Use(middleware.JwtAuth())		
+	}
 	
 	RegisterCustomersRoutes(v1)
 	RegisterAddressesRoutes(v1)

@@ -57,3 +57,19 @@ func (config *Config) GetSecretKey() string {
 
 	return config.SecretKey
 }
+
+func (config *Config) UseAuth() bool {
+	err := godotenv.Load()
+
+	if err != nil {
+		log.Fatal("Failed to load .env")
+	}
+
+	useAuth := os.Getenv("USE_AUTH")
+
+	if useAuth == "true" {
+		return true
+	} else {
+		return false
+	}
+}
