@@ -65,7 +65,7 @@ func (config *Config) UseAuth() bool {
 		log.Fatal("Failed to load .env")
 	}
 
-	useAuth := os.Getenv("USE_AUTH")
+	useAuth := os.Getenv("AUTHENTICATION")
 
 	if useAuth == "true" {
 		return true
