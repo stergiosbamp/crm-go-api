@@ -17,6 +17,7 @@ const TOKEN_EXP_MINS = 15
 type AuthProvider struct {
 	conf  config.Config
 	Token string
+	dao.TokenDAO
 }
 
 func (authProvider *AuthProvider) GenerateToken(username string) (string, error) {
@@ -94,10 +95,8 @@ func (authProvider *AuthProvider) GetUserFromToken(tokenString string) (string, 
 }
 
 func (authProvider *AuthProvider) IsTokenBlacklisted() bool {
-	var tokenDAO dao.TokenDAO
-
 	tokenString := authProvider.Token
-	token, err := tokenDAO.FindByTokenString(tokenString)
+	token, err := authProvider.TokenDAO.FindByTokenString(tokenString)
 
 	if err != nil {
 		return true
