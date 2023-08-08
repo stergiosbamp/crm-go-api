@@ -9,6 +9,7 @@ import (
 	"github.com/golang-jwt/jwt"
 
 	"github.com/stergiosbamp/go-api/config"
+	"github.com/stergiosbamp/go-api/dao"
 )
 
 const TOKEN_EXP_MINS = 15
@@ -71,4 +72,40 @@ func (authProvider *AuthProvider) ExtractToken(request *http.Request) (string, e
 	token := authParts[1]
 
 	return token, nil
+}
+
+func (authProvider *AuthProvider) GetUserFromToken(tokenString string) (string, error) {
+	secretKey := authProvider.conf.GetSecretKey()
+
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return []byte(secretKey), nil
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if ok && token.Valid {
+		return claims["user"].(string), nil
+	} else {
+		return "", errors.New("invalid token")
+	}
+}
+
+func (authProvider *AuthProvider) IsTokenBlacklisted() bool {
+	var tokenDAO dao.TokenDAO
+
+	tokenString := authProvider.Token
+	token, err := tokenDAO.FindByTokenString(tokenString)
+
+	if err != nil {
+		return true
+	}
+
+	if token.Status == "inactive" {
+		return true
+	}
+
+	return false
 }

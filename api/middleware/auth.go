@@ -29,6 +29,14 @@ func JwtAuth() gin.HandlerFunc {
 			return
 		}
 
+		// is token blacklisted (after logout)
+		blacklisted := authProvider.IsTokenBlacklisted()
+		if blacklisted {
+			ctx.JSON(http.StatusUnauthorized, gin.H{"status": "Unauthorized", "error": "token is blacklisted"})
+			ctx.Abort()
+			return
+		}
+
 		ctx.Next()
 	}
 }

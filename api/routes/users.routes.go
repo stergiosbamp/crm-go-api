@@ -8,8 +8,8 @@ import (
 func RegisterUserRoutes(rg *gin.RouterGroup) {
 	// separate group for auth to avoid auth middleware
 	authGroup := rg.Group("/auth")
-	
+
 	authGroup.POST("/register", controllers.Register)
 	authGroup.POST("/login", controllers.Login)
-	// authGroup.POST("/logout", controllers.Logout)
+	authGroup.POST("/logout", controllers.Logout)
 }

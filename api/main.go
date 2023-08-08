@@ -8,7 +8,7 @@ import (
 
 func main() {
 	db, _ := database.GetDB()
-	db.AutoMigrate(&models.Customer{}, &models.Contact{}, &models.Address{}, &models.User{})
+	db.AutoMigrate(&models.Customer{}, &models.Contact{}, &models.Address{}, &models.User{}, &models.Token{})
 	
 	routes.InitRoutes()
 

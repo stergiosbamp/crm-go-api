@@ -12,6 +12,7 @@ import (
 )
 
 var userDAO = dao.NewUserDAO()
+var tokenDAO = dao.NewTokenDAO()
 
 type UserRegisterRequest struct {
 	Username string `json:"username" binding:"required"`
@@ -99,6 +100,13 @@ func Login(ctx *gin.Context) {
 		return
 	}
 
+	// Save token of user in database
+	tokenDAO.Create(&models.Token{
+		UserID: user.ID,
+		Token:  tokenString,
+		Status: "active",	
+	})
+
 	response := UserLoginResponse{
 		Message: "Login successful",
 		Token:   tokenString,
@@ -106,4 +114,37 @@ func Login(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, response)
 
+}
+
+func Logout(ctx *gin.Context) {
+	var token auth.AuthProvider
+	
+	tokenString, err := token.ExtractToken(ctx.Request)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// get user (username) from token
+	username, err := token.GetUserFromToken(tokenString)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	user, err := userDAO.FindByUsername(username)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Save token of user in database
+	tokenDAO.UpdateStatus(user, "inactive")
+
+	response := UserLoginResponse{
+		Message: "Logout successful",
+		Token:   tokenString,
+	}
+
+	ctx.JSON(http.StatusOK, response)
 }
