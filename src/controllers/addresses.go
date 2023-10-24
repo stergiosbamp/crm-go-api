@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/stergiosbamp/go-api/dao"
-	"github.com/stergiosbamp/go-api/models"
+	"github.com/stergiosbamp/go-api/src/dao"
+	"github.com/stergiosbamp/go-api/src/models"
 )
 
 var addressDAO = dao.NewAddressDAO()
@@ -44,25 +44,25 @@ func GetAddress(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	
+
 	id := uri.ID
 	address, err := addressDAO.GetById(id)
-	
+
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Address with ID %v not found.", id)})
 		return
 	}
 
-	addressResponse := AddressResponse {
-		ID: address.ID,
-		CustomerID: address.CustomerID,
-		Type: address.Type,
-		Address: address.Address,
-		Pobox: address.Pobox,
-		PostalCode: address.PostalCode,
-		City: address.City,
-		Province: address.Province,
-		Country: address.Country,
+	addressResponse := AddressResponse{
+		ID:              address.ID,
+		CustomerID:      address.CustomerID,
+		Type:            address.Type,
+		Address:         address.Address,
+		Pobox:           address.Pobox,
+		PostalCode:      address.PostalCode,
+		City:            address.City,
+		Province:        address.Province,
+		Country:         address.Country,
 		AttentionPerson: address.AttentionPerson,
 	}
 
@@ -71,7 +71,7 @@ func GetAddress(ctx *gin.Context) {
 
 func GetAddresses(ctx *gin.Context) {
 	addresses, err := addressDAO.GetList()
-	
+
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", err.Error())})
 		return
@@ -81,21 +81,21 @@ func GetAddresses(ctx *gin.Context) {
 	var addressesResponse []AddressResponse
 
 	for _, address := range addresses {
-		address := AddressResponse {
-			ID: address.ID,
-			CustomerID: address.CustomerID,
-			Type: address.Type,
-			Address: address.Address,
-			Pobox: address.Pobox,
-			PostalCode: address.PostalCode,
-			City: address.City,
-			Province: address.Province,
-			Country: address.Country,
+		address := AddressResponse{
+			ID:              address.ID,
+			CustomerID:      address.CustomerID,
+			Type:            address.Type,
+			Address:         address.Address,
+			Pobox:           address.Pobox,
+			PostalCode:      address.PostalCode,
+			City:            address.City,
+			Province:        address.Province,
+			Country:         address.Country,
 			AttentionPerson: address.AttentionPerson,
 		}
 		addressesResponse = append(addressesResponse, address)
 	}
-	
+
 	ctx.JSON(http.StatusOK, addressesResponse)
 }
 
@@ -110,7 +110,7 @@ func CreateAddress(ctx *gin.Context) {
 
 	// Check if payload contains a customerId. If not it's meant for a contact.
 	if addressReq.CustomerID != nil {
-		
+
 		// Customer exists?
 		customerId := addressReq.CustomerID
 		customer, err := customerDAO.GetById(*customerId)
@@ -137,30 +137,30 @@ func CreateAddress(ctx *gin.Context) {
 				return
 			}
 		}
-		
+
 		// Populate an Address model from request data
 		address = models.Address{
-			CustomerID: addressReq.CustomerID,
-			Type: addressReq.Type,
-			Address: addressReq.Address,
-			Pobox: addressReq.Pobox,
-			PostalCode: addressReq.PostalCode,
-			City: addressReq.City,
-			Province: addressReq.Province,
-			Country: addressReq.Country,
+			CustomerID:      addressReq.CustomerID,
+			Type:            addressReq.Type,
+			Address:         addressReq.Address,
+			Pobox:           addressReq.Pobox,
+			PostalCode:      addressReq.PostalCode,
+			City:            addressReq.City,
+			Province:        addressReq.Province,
+			Country:         addressReq.Country,
 			AttentionPerson: addressReq.AttentionPerson,
 		}
-		
+
 	} else {
 		// Address refers to contact so omit customer data
-		address = models.Address {
-			Type: addressReq.Type,
-			Address: addressReq.Address,
-			Pobox: addressReq.Pobox,
+		address = models.Address{
+			Type:       addressReq.Type,
+			Address:    addressReq.Address,
+			Pobox:      addressReq.Pobox,
 			PostalCode: addressReq.PostalCode,
-			City: addressReq.City,
-			Province: addressReq.Province,
-			Country: addressReq.Country,
+			City:       addressReq.City,
+			Province:   addressReq.Province,
+			Country:    addressReq.Country,
 		}
 	}
 
@@ -172,19 +172,19 @@ func CreateAddress(ctx *gin.Context) {
 	}
 
 	// Can use a universal response due to 'omitempty' tags
-	addressRes := AddressResponse {
-		ID: addressCreated.ID,
-		CustomerID: addressReq.CustomerID,
-		Type: addressCreated.Type,
-		Address: addressCreated.Address,
-		Pobox: addressCreated.Pobox,
-		PostalCode: addressCreated.PostalCode,
-		City: addressCreated.City,
-		Province: addressCreated.Province,
-		Country: addressCreated.Country,
+	addressRes := AddressResponse{
+		ID:              addressCreated.ID,
+		CustomerID:      addressReq.CustomerID,
+		Type:            addressCreated.Type,
+		Address:         addressCreated.Address,
+		Pobox:           addressCreated.Pobox,
+		PostalCode:      addressCreated.PostalCode,
+		City:            addressCreated.City,
+		Province:        addressCreated.Province,
+		Country:         addressCreated.Country,
 		AttentionPerson: addressCreated.AttentionPerson,
 	}
-	
+
 	ctx.JSON(http.StatusCreated, addressRes)
 }
 
@@ -223,15 +223,15 @@ func UpdateAddress(ctx *gin.Context) {
 
 	// Create an Address model from the updated request data
 	address := models.Address{
-		ID: uri.ID,
-		CustomerID: addressReq.CustomerID,
-		Type: addressReq.Type,
-		Address: addressReq.Address,
-		Pobox: addressReq.Pobox,
-		PostalCode: addressReq.PostalCode,
-		City: addressReq.City,
-		Province: addressReq.Province,
-		Country: addressReq.Country,
+		ID:              uri.ID,
+		CustomerID:      addressReq.CustomerID,
+		Type:            addressReq.Type,
+		Address:         addressReq.Address,
+		Pobox:           addressReq.Pobox,
+		PostalCode:      addressReq.PostalCode,
+		City:            addressReq.City,
+		Province:        addressReq.Province,
+		Country:         addressReq.Country,
 		AttentionPerson: addressReq.AttentionPerson,
 	}
 
@@ -241,17 +241,17 @@ func UpdateAddress(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", err.Error())})
 		return
 	}
-	
-	addressRes := AddressResponse {
-		ID: updatedAddress.ID,
-		CustomerID: addressReq.CustomerID,
-		Type: updatedAddress.Type,
-		Address: updatedAddress.Address,
-		Pobox: updatedAddress.Pobox,
-		PostalCode: updatedAddress.PostalCode,
-		City: updatedAddress.City,
-		Province: updatedAddress.Province,
-		Country: updatedAddress.Country,
+
+	addressRes := AddressResponse{
+		ID:              updatedAddress.ID,
+		CustomerID:      addressReq.CustomerID,
+		Type:            updatedAddress.Type,
+		Address:         updatedAddress.Address,
+		Pobox:           updatedAddress.Pobox,
+		PostalCode:      updatedAddress.PostalCode,
+		City:            updatedAddress.City,
+		Province:        updatedAddress.Province,
+		Country:         updatedAddress.Country,
 		AttentionPerson: updatedAddress.AttentionPerson,
 	}
 
@@ -271,19 +271,19 @@ func DeleteAddress(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Address with id: %v doesn't exist", uri.ID)})
 		return
-	}	
-	
+	}
+
 	// To delete a "legal" branch you must first set customer to inactive.
 	if address.Type == "legal" {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Cannot delete a legal branch. Set customer with id: %v to inactive first.", *address.CustomerID)})
 		return
 	}
-	
+
 	errDeleted := addressDAO.Delete(uri.ID)
 	if errDeleted != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error DB. Full error %v", errDeleted.Error())})
 		return
 	}
-	
-	ctx.JSON(http.StatusNoContent, gin.H{"":""})
+
+	ctx.JSON(http.StatusNoContent, gin.H{"": ""})
 }

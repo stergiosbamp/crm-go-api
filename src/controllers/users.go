@@ -4,11 +4,10 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/stergiosbamp/go-api/src/auth"
+	"github.com/stergiosbamp/go-api/src/dao"
+	"github.com/stergiosbamp/go-api/src/models"
 	"golang.org/x/crypto/bcrypt"
-
-	"github.com/stergiosbamp/go-api/auth"
-	"github.com/stergiosbamp/go-api/dao"
-	"github.com/stergiosbamp/go-api/models"
 )
 
 var userDAO = dao.NewUserDAO()
@@ -104,7 +103,7 @@ func Login(ctx *gin.Context) {
 	tokenDAO.Create(&models.Token{
 		UserID: user.ID,
 		Token:  tokenString,
-		Status: "active",	
+		Status: "active",
 	})
 
 	response := UserLoginResponse{
@@ -118,7 +117,7 @@ func Login(ctx *gin.Context) {
 
 func Logout(ctx *gin.Context) {
 	var token auth.AuthProvider
-	
+
 	tokenString, err := token.ExtractToken(ctx.Request)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

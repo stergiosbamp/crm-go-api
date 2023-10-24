@@ -1,11 +1,8 @@
 package dao
 
-import (
-	"github.com/stergiosbamp/go-api/models"
-)
+import "github.com/stergiosbamp/go-api/src/models"
 
 type TokenDAO struct {
-	
 }
 
 func NewTokenDAO() *TokenDAO {

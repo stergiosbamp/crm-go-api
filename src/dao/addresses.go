@@ -1,11 +1,8 @@
 package dao
 
-import (
-	"github.com/stergiosbamp/go-api/models"
-)
+import "github.com/stergiosbamp/go-api/src/models"
 
 type AddressDAO struct {
-	
 }
 
 func NewAddressDAO() *AddressDAO {
@@ -35,7 +32,7 @@ func (adao *AddressDAO) Update(address *models.Address) (*models.Address, error)
 	return address, res.Error
 }
 
-func (adao *AddressDAO) Delete(id uint) (error) {
+func (adao *AddressDAO) Delete(id uint) error {
 	var address models.Address
 	// db.Where("id = ?", id).Unscoped().Delete(&Address)
 	res := db.Delete(&address, id).Unscoped()

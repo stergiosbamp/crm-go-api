@@ -5,8 +5,6 @@ services:
   db:
     image: mysql:8.0
     container_name: db
-    # NOTE: use of "mysql_native_password" is not recommended: https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html#upgrade-caching-sha2-password
-    # (this is just an example, not intended to be a production configuration)
     command: --default-authentication-plugin=mysql_native_password
     restart: unless-stopped
     environment:
@@ -28,7 +26,7 @@ services:
     ports:
       - 8080:8080
     env_file:
-      - ../api/.env
+      - ../.env
     networks:
       - backend
     depends_on:
@@ -40,14 +38,13 @@ services:
     ports:
       - 8512:8080
     volumes:
-      - ../swagger/:/swagger/
+      - ../doc/openapi/:/swagger/
     environment:
       SWAGGER_JSON: /swagger/openapi.yaml  # relative to container's directory (i.e. /swagger/)
       BASE_URL: /swagger  # access at http://localhost:8512/swagger/
 
 volumes:
   mysql-db:
-
 
 networks:
   backend:

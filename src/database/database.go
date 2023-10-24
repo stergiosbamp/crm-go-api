@@ -3,10 +3,9 @@ package database
 import (
 	"log"
 
+	"github.com/stergiosbamp/go-api/src/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-
-	"github.com/stergiosbamp/go-api/config"
 )
 
 func GetDB() (*gorm.DB, error) {

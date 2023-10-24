@@ -3,7 +3,7 @@ package routes
 import (
 	"github.com/gin-gonic/gin"
 
-	"github.com/stergiosbamp/go-api/controllers"
+	"github.com/stergiosbamp/go-api/src/controllers"
 )
 
 // Routes function to serve endpoints

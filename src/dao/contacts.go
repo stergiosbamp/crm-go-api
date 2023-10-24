@@ -1,11 +1,8 @@
 package dao
 
-import (
-	"github.com/stergiosbamp/go-api/models"
-)
+import "github.com/stergiosbamp/go-api/src/models"
 
 type ContactDAO struct {
-	
 }
 
 func NewContactDAO() *ContactDAO {
@@ -35,7 +32,7 @@ func (cdao *ContactDAO) Update(contact *models.Contact) (*models.Contact, error)
 	return contact, res.Error
 }
 
-func (cdao *ContactDAO) Delete(id uint) (error) {
+func (cdao *ContactDAO) Delete(id uint) error {
 	var contact models.Contact
 	// db.Where("id = ?", id).Unscoped().Delete(&contact)
 	res := db.Delete(&contact, id).Unscoped()

@@ -2,7 +2,7 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/stergiosbamp/go-api/controllers"
+	"github.com/stergiosbamp/go-api/src/controllers"
 )
 
 func RegisterAddressesRoutes(rg *gin.RouterGroup) {

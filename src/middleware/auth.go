@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/stergiosbamp/go-api/auth"
+	"github.com/stergiosbamp/go-api/src/auth"
 )
 
 var authProvider = auth.AuthProvider{}

@@ -20,7 +20,6 @@ type Config struct {
 
 func (config *Config) CreateDSN() string {
 	err := godotenv.Load()
-
 	if err != nil {
 		log.Fatal("Failed to load .env")
 	}

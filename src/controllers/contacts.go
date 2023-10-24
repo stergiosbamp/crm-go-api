@@ -7,8 +7,8 @@ import (
 	// "time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/stergiosbamp/go-api/dao"
-	"github.com/stergiosbamp/go-api/models"
+	"github.com/stergiosbamp/go-api/src/dao"
+	"github.com/stergiosbamp/go-api/src/models"
 )
 
 var contactDAO = dao.NewContactDAO()
@@ -53,7 +53,6 @@ type ContactResponse struct {
 	AddressID   *uint  `json:"addressId,omitempty"`
 }
 
-
 func GetContact(ctx *gin.Context) {
 	var uri URI
 
@@ -77,18 +76,18 @@ func GetContact(ctx *gin.Context) {
 		FirstName:   contact.FirstName,
 		LastName:    contact.LastName,
 		NickName:    contact.NickName,
-		Gender: contact.Gender,
-		Birthday: contact.Birthday,
-		Language: contact.Language,
-		JobTitle: contact.JobTitle,
-		Email: contact.Email,
-		Skype: contact.Skype,
+		Gender:      contact.Gender,
+		Birthday:    contact.Birthday,
+		Language:    contact.Language,
+		JobTitle:    contact.JobTitle,
+		Email:       contact.Email,
+		Skype:       contact.Skype,
 		PhoneDirect: contact.PhoneDirect,
 		PhoneOffice: contact.PhoneOffice,
-		Mobile: contact.Mobile,
-		Notes: contact.Notes,
-		CustomerID: contact.CustomerID,
-		AddressID: contact.AddressID,
+		Mobile:      contact.Mobile,
+		Notes:       contact.Notes,
+		CustomerID:  contact.CustomerID,
+		AddressID:   contact.AddressID,
 	}
 
 	ctx.JSON(http.StatusOK, contactRes)
@@ -111,22 +110,22 @@ func GetContacts(ctx *gin.Context) {
 			FirstName:   contact.FirstName,
 			LastName:    contact.LastName,
 			NickName:    contact.NickName,
-			Gender: contact.Gender,
-			Birthday: contact.Birthday,
-			Language: contact.Language,
-			JobTitle: contact.JobTitle,
-			Email: contact.Email,
-			Skype: contact.Skype,
+			Gender:      contact.Gender,
+			Birthday:    contact.Birthday,
+			Language:    contact.Language,
+			JobTitle:    contact.JobTitle,
+			Email:       contact.Email,
+			Skype:       contact.Skype,
 			PhoneDirect: contact.PhoneDirect,
 			PhoneOffice: contact.PhoneOffice,
-			Mobile: contact.Mobile,
-			Notes: contact.Notes,
-			CustomerID: contact.CustomerID,
-			AddressID: contact.AddressID,
+			Mobile:      contact.Mobile,
+			Notes:       contact.Notes,
+			CustomerID:  contact.CustomerID,
+			AddressID:   contact.AddressID,
 		}
 		contactsRes = append(contactsRes, contact)
 	}
-	
+
 	ctx.JSON(http.StatusOK, contactsRes)
 }
 
@@ -146,13 +145,13 @@ func CreateContact(ctx *gin.Context) {
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Address with id: %v doesn't exist", *addressId)})
 			return
-		}	
+		}
 		if address.Type != "contact" {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Address with id: %v refers to a customer's address and not to a contact", *addressId)})
 			return
 		}
 	}
-	
+
 	// Create a Model from request data
 	contact := models.Contact{
 		ContactType: contactReq.ContactType,

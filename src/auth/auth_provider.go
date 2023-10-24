@@ -7,9 +7,8 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
-
-	"github.com/stergiosbamp/go-api/config"
-	"github.com/stergiosbamp/go-api/dao"
+	"github.com/stergiosbamp/go-api/src/config"
+	"github.com/stergiosbamp/go-api/src/dao"
 )
 
 const TOKEN_EXP_MINS = 15
