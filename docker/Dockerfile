@@ -4,15 +4,13 @@ RUN apk add --no-cache git
 
 WORKDIR /app
 
-COPY ./src .
-
 COPY go.mod .
 COPY go.sum .
+COPY src src
+COPY cmd cmd
 
-RUN go mod tidy
-
-RUN CGO_ENABLED=0 go build -o ./go-api
+RUN cd cmd && go mod tidy && CGO_ENABLED=0 go build -o bin/crm-go-api
 
 EXPOSE ${PORT}
 
-CMD ["./go-api"]
+ENTRYPOINT ["./cmd/bin/crm-go-api"]
