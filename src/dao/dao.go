@@ -9,7 +9,6 @@ import (
 var db *gorm.DB
 
 func init() {
-	println("IN DAO INIT")
 	db = database.DB
 }
 
