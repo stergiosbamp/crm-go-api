@@ -1,32 +1,28 @@
-# A pluggable, simple and fast API for your CRM.
+# A pluggable, simple and fast API for your CRM. ⚡
 
-## Installation
 
-### Setup environment variables
+[![Go](https://img.shields.io/badge/Go-1.20-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://golang.org/) [![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/) [![Swagger](https://img.shields.io/badge/Swagger-OpenAPI-85EA2D?style=for-the-badge&logo=swagger&logoColor=white)](https://swagger.io/) [![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+
+## 🛠 Installation
+
+### Environment Variables 
 
 Before running the app, you must first need to setup the environment variables. 
-It is provided a `.env.example` file under the `api/` directory, to indicate which variables must be set. 
+It is provided a `.env.example` file to indicate which variables must be set. 
 
 The file holds some pre-defined values that work with the current setup of Docker. If you wish to change them, do not forget to tweak them in the Docker files accordingly.
 
+```bash
+$ cp .env.example .env
+```
 
-* For production use:
-    ```bash
-    $ cp api/.env.example api/.env
-    ```
+### 🚀 Run the Application
 
-* For development use:
-    ```bash
-    $ cp api/.env.example api/.env.dev
-    ```
+The whole application and its dependencies are containarized, utilizing Docker. 🐋
 
-### Run the app
+**Steps**
 
-To run the up we simply use the power of Docker and Docker Compose v2.
-
-**Production**
-
-To spin up the app for production use:
+Start the application's infrastructure services using Docker Compose.
 
 ```bash
 $ cd docker/
@@ -34,57 +30,40 @@ $ docker compose build
 $ docker compose up -d
 ```
 
-The above command does the following:
+**Dependencies**
 
-1. Spins up a MySQL database
-2. Builds and runs the Go application
+- **MySQL** database.
+- **Swagger** UI application for API documentation and specification.
 
-Verify it is running by making a request
+**Test it**
 
 ```bash
-$ curl localhost:8080
+$ curl localhost:8080  # Ping health check
 ```
-
+```
 It should return:
 
-```text
 A pluggable, simple and fast CRM API
 ```
 
-**Development**
+## 💡 Features of the API
 
-There are also provided a `docker-compose.dev.yml` with a `Dockerfile.dev` for use of local development.
+This API provides a comprehensive set of features for a CRM system, and implemented business logic for the management of its entities.
 
-```bash
-$ cd docker/
-$ docker compose -f docker-compose.yml -f docker-compose.dev.yml build
-$ docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
-```
+### 📖 OpenAPI Specification
+- The definition of the API is described in detail in the [API documentation](swagger/openapi.yaml) following the OpenAPI Specification 3.0.
+- Explore the API and its' capabilities at: `http://localhost:8512/swagger/`
 
-## API
+### 🔒 Authentication
 
-This API provides a simple and easy-to-use management of customers. 
+- API supports authentication using JSON Web Tokens (JWT).
+- Protect your endpoints and control access to your CRM data.
+- Generate tokens for your users and invalidate them using server-side blacklisting.
 
-### Usage
-The usage of API is described in detail in the [API documentation](swagger/openapi.yaml) following the OpenAPI Specification 3.0.
+### 🌐 Entities
 
-For this purpose, you can explore the API and its' capabilities at:
+The API supports full CRUD (Create, Read, Update, Delete) operations for the following entities:
 
-`http://localhost:8512/swagger/`
-
-where an instance of the Swagger UI application is provided through Docker. The Swagger UI provides a user-friendly interface for exploring and interacting with your API, allowing you to easily test API requests and responses, view documentation, and more.
-
-### Info
-The API currently supports the management of:
-
-1. Customers
-2. Contacts (of Customers)
-3. Addresses (of Customers or Contacts)
-
-However, this API implements the following business logic for the above entities, as every CRM is supposed to:
-
-* A Customer can have multiple Contacts and Addresses
-* Only 3 types of Addresses are supported: "legal" or "branch" for Customers or "contact" for Contacts.
-* A Customer can have only one "legal" Address. Only then it is considered as active.
-* A Customer can have multiple "branch" Addresses.
-* A Contact may or may not have an Address.
+- **Customers**: Manage customer data efficiently.
+- **Contacts**: Keep track of your contacts and interactions.
+- **Addresses**: Handle address information seamlessly.
