@@ -2,73 +2,44 @@ package config
 
 import (
 	"fmt"
-	"log"
 	"os"
-
-	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	DbUser string
-	DbPass string
-	DbHost string
-	DbPort string
-	DbName string
+	DbUser         string
+	DbPass         string
+	DbHost         string
+	DbPort         string
+	DbName         string
+	Authentication string
+	SecretKey      string
+}
 
-	SecretKey string
+func NewConfig() *Config {
+	var config = new(Config)
+
+	config.DbUser = os.Getenv("DB_USER")
+	config.DbPass = os.Getenv("DB_PASS")
+	config.DbHost = os.Getenv("DB_HOST")
+	config.DbPort = os.Getenv("DB_PORT")
+	config.DbName = os.Getenv("DB_NAME")
+	config.SecretKey = os.Getenv("SECRET_KEY")
+	config.Authentication = os.Getenv("AUTHENTICATION")
+
+	return config
 }
 
 func (config *Config) CreateDSN() string {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Failed to load .env")
-	}
-
-	user := os.Getenv("DB_USER")
-	config.DbUser = user
-
-	pass := os.Getenv("DB_PASS")
-	config.DbPass = pass
-
-	host := os.Getenv("DB_HOST")
-	config.DbHost = host
-
-	port := os.Getenv("DB_PORT")
-	config.DbPort = port
-
-	dbName := os.Getenv("DB_NAME")
-	config.DbName = dbName
-
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=true&loc=Local", 
-						config.DbUser, config.DbPass, config.DbHost, config.DbPort, config.DbName)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=true&loc=Local",
+		config.DbUser, config.DbPass, config.DbHost, config.DbPort, config.DbName)
 
 	return dsn
 }
 
 func (config *Config) GetSecretKey() string {
-	err := godotenv.Load()
-
-	if err != nil {
-		log.Fatal("Failed to load .env")
-	}
-
-	config.SecretKey = os.Getenv("SECRET_KEY")
-
 	return config.SecretKey
 }
 
 func (config *Config) UseAuth() bool {
-	err := godotenv.Load()
-
-	if err != nil {
-		log.Fatal("Failed to load .env")
-	}
-
-	useAuth := os.Getenv("AUTHENTICATION")
-
-	if useAuth == "true" {
-		return true
-	} else {
-		return false
-	}
+	return config.Authentication == "true"
 }

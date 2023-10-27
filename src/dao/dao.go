@@ -1,9 +1,15 @@
 package dao
 
-import "github.com/stergiosbamp/go-api/src/database"
+import (
+	"github.com/stergiosbamp/go-api/src/database"
+	"gorm.io/gorm"
+)
 
-type DAO interface {
-	Get()
+
+var db *gorm.DB
+
+func init() {
+	println("IN DAO INIT")
+	db = database.DB
 }
 
-var db, _ = database.GetDB()

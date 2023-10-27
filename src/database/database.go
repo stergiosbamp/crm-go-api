@@ -3,21 +3,34 @@ package database
 import (
 	"log"
 
-	"github.com/stergiosbamp/go-api/src/config"
+	_ "github.com/joho/godotenv/autoload" // Load .env file automatically
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+
+	"github.com/stergiosbamp/go-api/src/config"
+	"github.com/stergiosbamp/go-api/src/models"
 )
 
-func GetDB() (*gorm.DB, error) {
+var DB *gorm.DB
 
-	var config config.Config
-	dsn := config.CreateDSN()
-
+func init() {
+	configuration := config.NewConfig()
+	
+	dsn := configuration.CreateDSN()
+	
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	return db, err
+	DB = db
+}
+
+func Migrate() error {
+	err := DB.AutoMigrate(&models.Address{}, &models.Contact{}, &models.Customer{}, &models.Token{}, &models.User{})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

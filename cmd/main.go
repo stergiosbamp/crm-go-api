@@ -4,20 +4,16 @@ import (
 	"log"
 
 	"github.com/stergiosbamp/go-api/src/database"
-	"github.com/stergiosbamp/go-api/src/models"
 	"github.com/stergiosbamp/go-api/src/routes"
 )
 
 func main() {
-	db, err := database.GetDB()
+	// Migrate database
+	err := database.Migrate()
 	if err != nil {
-		log.Fatal("Failed to start database", err)
+		log.Fatal("Error migrating database: ", err.Error())
 	}
 
-	err = db.AutoMigrate(&models.Customer{}, &models.Contact{}, &models.Address{}, &models.User{}, &models.Token{})
-	if err != nil {
-		log.Fatal("Failed to migrate database", err)
-	}
-
-	routes.InitRoutes()
+	// Initialize API routes
+	routes.Init()
 }

@@ -8,7 +8,7 @@ import (
 
 var conf config.Config
 
-func InitRoutes() {
+func Init() {
 	route := gin.Default()
 
 	// API info, aliveness.
