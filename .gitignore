@@ -26,3 +26,6 @@ api/debug/*
 
 # Go workspace file
 go.work
+
+# Go application executable
+cmd/bin/
