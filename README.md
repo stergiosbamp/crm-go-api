@@ -1,5 +1,8 @@
 # A pluggable, simple and fast API for your CRM. ⚡
 
+
+[![Go](https://img.shields.io/badge/Go-1.20-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://golang.org/) [![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/) [![Swagger](https://img.shields.io/badge/Swagger-OpenAPI-85EA2D?style=for-the-badge&logo=swagger&logoColor=white)](https://swagger.io/) [![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+
 ## 🛠 Installation
 
 ### Environment Variables 
@@ -9,11 +12,9 @@ It is provided a `.env.example` file to indicate which variables must be set.
 
 The file holds some pre-defined values that work with the current setup of Docker. If you wish to change them, do not forget to tweak them in the Docker files accordingly.
 
-
-* For production use:
-    ```bash
-    $ cp .env.example .env
-    ```
+```bash
+$ cp .env.example .env
+```
 
 ### 🚀 Run the Application
 
