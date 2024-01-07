@@ -26,11 +26,34 @@ services:
     ports:
       - 8080:8080
     env_file:
-      - ../.env.docker
+      - ../.env
     networks:
       - backend
     depends_on:
       - db
+      - redis
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+    volumes: 
+      - redis-data:/data
+    networks:
+        - backend
+
+  redisinsight:
+    image: redislabs/redisinsight:latest
+    container_name: redisinsight
+    restart: unless-stopped
+    ports:
+      - 8001:8001
+    volumes:
+      - redisinsight-data:/db
+    networks:
+      - backend
 
   swagger:
     image: swaggerapi/swagger-ui
@@ -47,6 +70,8 @@ services:
 
 volumes:
   mysql-db:
+  redis-data:
+  redisinsight-data:
 
 networks:
   backend:

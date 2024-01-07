@@ -9,6 +9,8 @@ import (
 var conf config.Config
 
 func Init() {
+	conf := config.NewConfig()
+
 	route := gin.Default()
 
 	// API info, aliveness.
@@ -22,7 +24,7 @@ func Init() {
 
 	if conf.UseAuth() {
 		// all endpoints below require authentication
-		v1.Use(middleware.JwtAuth())
+		v1.Use(middleware.JwtAuthFlow())
 	}
 
 	RegisterCustomersRoutes(v1)

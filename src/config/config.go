@@ -11,6 +11,10 @@ type Config struct {
 	DbHost         string
 	DbPort         string
 	DbName         string
+	RedisHost      string
+	RedisPort      string
+	RedisPass      string
+	RedisDB        string
 	Authentication string
 	SecretKey      string
 }
@@ -23,6 +27,12 @@ func NewConfig() *Config {
 	config.DbHost = os.Getenv("DB_HOST")
 	config.DbPort = os.Getenv("DB_PORT")
 	config.DbName = os.Getenv("DB_NAME")
+
+	config.RedisHost = os.Getenv("REDIS_HOST")
+	config.RedisPort = os.Getenv("REDIS_PORT")
+	config.RedisPass = os.Getenv("REDIS_PASS")
+	config.RedisDB = os.Getenv("REDIS_DB")
+
 	config.SecretKey = os.Getenv("SECRET_KEY")
 	config.Authentication = os.Getenv("AUTHENTICATION")
 

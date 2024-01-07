@@ -27,7 +27,7 @@ func init() {
 }
 
 func Migrate() error {
-	err := DB.AutoMigrate(&models.Address{}, &models.Contact{}, &models.Customer{}, &models.Token{}, &models.User{})
+	err := DB.AutoMigrate(&models.Address{}, &models.Contact{}, &models.Customer{}, &models.User{})
 	if err != nil {
 		return err
 	}
