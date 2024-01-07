@@ -4,14 +4,16 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	// "github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
+
 	"github.com/stergiosbamp/go-api/src/auth"
 	"github.com/stergiosbamp/go-api/src/dao"
 	"github.com/stergiosbamp/go-api/src/models"
-	"golang.org/x/crypto/bcrypt"
 )
 
 var userDAO = dao.NewUserDAO()
-var tokenDAO = dao.NewTokenDAO()
+var authProvider = auth.NewAuthProvider()
 
 type UserRegisterRequest struct {
 	Username string `json:"username" binding:"required"`
@@ -28,9 +30,9 @@ type UserLoginRequest struct {
 	Password string `json:"password" binding:"required"`
 }
 
-type UserLoginResponse struct {
+type UserResponse struct {
 	Message string `json:"message"`
-	Token   string `json:"token"`
+	Token   string `json:"token,omitempty"`
 }
 
 func Register(ctx *gin.Context) {
@@ -66,8 +68,6 @@ func Register(ctx *gin.Context) {
 }
 
 func Login(ctx *gin.Context) {
-	var token auth.AuthProvider
-
 	var userLoginRequest UserLoginRequest
 
 	if err := ctx.ShouldBindJSON(&userLoginRequest); err != nil {
@@ -77,7 +77,7 @@ func Login(ctx *gin.Context) {
 
 	user, err := userDAO.FindByUsername(userLoginRequest.Username)
 	if err != nil {
-		response := UserLoginResponse{
+		response := UserResponse{
 			Message: "User does not exist",
 		}
 		ctx.JSON(http.StatusBadRequest, response)
@@ -86,27 +86,20 @@ func Login(ctx *gin.Context) {
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userLoginRequest.Password))
 	if err != nil {
-		response := UserLoginResponse{
+		response := UserResponse{
 			Message: "Invalid credentials",
 		}
 		ctx.JSON(http.StatusUnauthorized, response)
 		return
 	}
 
-	tokenString, err := token.GenerateToken(user.Username)
+	tokenString, err := authProvider.GenerateToken(user.Username)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Save token of user in database
-	tokenDAO.Create(&models.Token{
-		UserID: user.ID,
-		Token:  tokenString,
-		Status: "active",
-	})
-
-	response := UserLoginResponse{
+	response := UserResponse{
 		Message: "Login successful",
 		Token:   tokenString,
 	}
@@ -116,33 +109,18 @@ func Login(ctx *gin.Context) {
 }
 
 func Logout(ctx *gin.Context) {
-	var token auth.AuthProvider
-
-	tokenString, err := token.ExtractToken(ctx.Request)
+	tokenString, err := auth.ExtractToken(ctx.Request)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// get user (username) from token
-	username, err := token.GetUserFromToken(tokenString)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+	// Revoke user's session
+	var tokenRevoker auth.TokenRevoker = auth.NewRedisTokenRevoker(ctx)
+	tokenRevoker.RevokeToken(tokenString)
 
-	user, err := userDAO.FindByUsername(username)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	// Save token of user in database
-	tokenDAO.UpdateStatus(user, "inactive")
-
-	response := UserLoginResponse{
+	response := UserResponse{
 		Message: "Logout successful",
-		Token:   tokenString,
 	}
 
 	ctx.JSON(http.StatusOK, response)

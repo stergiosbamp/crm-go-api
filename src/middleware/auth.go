@@ -7,36 +7,37 @@ import (
 	"github.com/stergiosbamp/go-api/src/auth"
 )
 
-var authProvider = auth.AuthProvider{}
-
-func JwtAuth() gin.HandlerFunc {
+func JwtAuthFlow() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		token, err := authProvider.ExtractToken(ctx.Request)
-
+		// token provided?
+		token, err := auth.ExtractToken(ctx.Request)
 		if err != nil {
-			ctx.JSON(http.StatusUnauthorized, gin.H{"status": "Unauthorized", "error": err.Error()})
+			ctx.JSON(http.StatusUnauthorized, gin.H{"status": "Unauthorized", "error": "Missing token"})
 			ctx.Abort()
 			return
 		}
 
-		// set token
-		authProvider.Token = token
-		verified, err := authProvider.Authenticate()
-
-		if !verified {
-			ctx.JSON(http.StatusUnauthorized, gin.H{"status": "Unauthorized", "error": err.Error()})
+		// token blacklisted (logged out) ?
+		var tokenRevoker auth.TokenRevoker = auth.NewRedisTokenRevoker(ctx)
+		if tokenRevoker.IsTokenRevoked(token) {
+			ctx.JSON(http.StatusUnauthorized, gin.H{"status": "Unauthorized", "error": "Invalid token"})
 			ctx.Abort()
 			return
 		}
 
-		// is token blacklisted (after logout)
-		blacklisted := authProvider.IsTokenBlacklisted()
-		if blacklisted {
-			ctx.JSON(http.StatusUnauthorized, gin.H{"status": "Unauthorized", "error": "token is blacklisted"})
+		// token valid ?
+		var authProvider = auth.NewAuthProvider()
+		authenticated, err := authProvider.Authenticate(token)
+		if !authenticated {
+			ctx.JSON(http.StatusUnauthorized, gin.H{"status": "Unauthorized", "error": "Invalid token"})
+			ctx.Abort()
+			return
+		} else if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "Unauthorized", "error": err.Error()})
 			ctx.Abort()
 			return
 		}
-
+		
 		ctx.Next()
 	}
 }
