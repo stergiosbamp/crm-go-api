@@ -20,7 +20,7 @@ func JwtAuthFlow() gin.HandlerFunc {
 		// token blacklisted (logged out) ?
 		var tokenRevoker auth.TokenRevoker = auth.NewRedisTokenRevoker(ctx)
 		if tokenRevoker.IsTokenRevoked(token) {
-			ctx.JSON(http.StatusUnauthorized, gin.H{"status": "Unauthorized", "error": "Invalid token"})
+			ctx.JSON(http.StatusUnauthorized, gin.H{"status": "Unauthorized", "error": "Token is revoked"})
 			ctx.Abort()
 			return
 		}
@@ -33,7 +33,7 @@ func JwtAuthFlow() gin.HandlerFunc {
 			ctx.Abort()
 			return
 		} else if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "Unauthorized", "error": err.Error()})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "Internal error", "error": err.Error()})
 			ctx.Abort()
 			return
 		}
