@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"strconv"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -22,11 +23,17 @@ type RedisTokenRevoker struct {
 }
 
 func NewRedisTokenRevoker(ctx context.Context) *RedisTokenRevoker {
-
+	addr := conf.RedisHost + ":" + conf.RedisPort
+	passwd := conf.RedisPass
+	db, err := strconv.Atoi(conf.RedisDB)
+	if err != nil {
+		return nil
+	}
+	
 	cl := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "",
-		DB:       0,
+		Addr:     addr,
+		Password: passwd,
+		DB:       db,
 	})
 
 	return &RedisTokenRevoker{
@@ -36,7 +43,6 @@ func NewRedisTokenRevoker(ctx context.Context) *RedisTokenRevoker {
 }
 
 func (revoker *RedisTokenRevoker) RevokeToken(token string) error {
-
 	key := BlacklistNamespace + token
 
 	return revoker.redisClient.Set(revoker.ctx, key, nil, BlacklistExpirationTime).Err()
