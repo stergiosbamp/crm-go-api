@@ -1,7 +1,7 @@
 # A pluggable, simple and fast API for your CRM. ⚡
 
 
-[![Go](https://img.shields.io/badge/Go-1.20-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://golang.org/) [![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/) [![Swagger](https://img.shields.io/badge/Swagger-OpenAPI-85EA2D?style=for-the-badge&logo=swagger&logoColor=white)](https://swagger.io/) [![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![Go](https://img.shields.io/badge/Go-1.20-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://golang.org/) [![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/) [![Redis](https://img.shields.io/badge/Redis-7-red?style=for-the-badge&logo=redis&logoColor=white)](https://redis.io/) [![Swagger](https://img.shields.io/badge/Swagger-OpenAPI-85EA2D?style=for-the-badge&logo=swagger&logoColor=white)](https://swagger.io/) [![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 
 ## 🛠 Installation
 
@@ -58,7 +58,7 @@ This API provides a comprehensive set of features for a CRM system, and implemen
 
 - API supports authentication using JSON Web Tokens (JWT).
 - Protect your endpoints and control access to your CRM data.
-- Generate tokens for your users and invalidate them using server-side blacklisting.
+- Generate tokens for your users and invalidate them using a token revocation mechanism.
 
 ### 🌐 Entities
 
