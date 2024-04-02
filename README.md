@@ -54,7 +54,7 @@ This API provides a comprehensive set of features for a CRM system, and implemen
 - The definition of the API is described in detail in the [API documentation](swagger/openapi.yaml) following the OpenAPI Specification 3.0.
 - Explore the API and its' capabilities at: `http://localhost:8512/swagger/`
 
-### 🔒 Authentication
+### 🔒 Security
 
 - API supports authentication using JSON Web Tokens (JWT).
 - Protect your endpoints and control access to your CRM data.
